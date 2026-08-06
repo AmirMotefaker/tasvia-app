@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "prisma:validate": "prisma validate",
+    "security:secrets": "node scripts/secret-scan.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
