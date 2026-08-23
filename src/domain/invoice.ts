@@ -7,3 +7,4 @@ export interface Invoice {
   amount: number;
   status: InvoiceStatus;
   createdAt: Date;
+}
