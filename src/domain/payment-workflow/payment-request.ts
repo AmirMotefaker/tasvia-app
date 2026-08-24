@@ -1,3 +1,5 @@
+import type { Money } from "../financial-safety/money";
+
 export type PaymentRequestStatus =
   | "CREATED"
   | "WAITING_PAYMENT"
@@ -10,7 +12,7 @@ export interface PaymentRequest {
   businessId: string;
   invoiceId: string;
   supplierId: string;
-  amount: number;
+  amount: Money;
   status: PaymentRequestStatus;
   createdAt: Date;
 }

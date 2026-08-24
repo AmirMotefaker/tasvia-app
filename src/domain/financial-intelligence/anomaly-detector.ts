@@ -1,3 +1,5 @@
+import type { Money } from "../financial-safety/money";
+
 export interface AmountAnomalyResult {
   detected: boolean;
   deviationRatio: number;
@@ -5,19 +7,21 @@ export interface AmountAnomalyResult {
 }
 
 export function detectAmountAnomaly(
-  currentAmount: number,
-  historicalAmounts: readonly number[],
+  currentAmount: Money,
+  historicalAmounts: readonly Money[],
 ): AmountAnomalyResult {
   if (historicalAmounts.length === 0) {
     return { detected: false, deviationRatio: 0, severity: "LOW" };
   }
 
-  const average =
-    historicalAmounts.reduce((total, amount) => total + amount, 0) /
-    historicalAmounts.length;
+  const total = historicalAmounts.reduce(
+    (sum, amount) => sum + amount.minorUnits,
+    BigInt(0),
+  );
+  const average = total / BigInt(historicalAmounts.length);
 
-  if (average <= 0) {
-    const detected = currentAmount > 0;
+  if (average <= BigInt(0)) {
+    const detected = currentAmount.minorUnits > BigInt(0);
     return {
       detected,
       deviationRatio: detected ? 1 : 0,
@@ -25,13 +29,19 @@ export function detectAmountAnomaly(
     };
   }
 
-  const deviationRatio = Math.abs(currentAmount - average) / average;
+  const deviation =
+    currentAmount.minorUnits >= average
+      ? currentAmount.minorUnits - average
+      : average - currentAmount.minorUnits;
 
-  if (deviationRatio >= 2) {
+  const deviationRatio =
+    Number((deviation * BigInt(10000)) / average) / 10000;
+
+  if (deviation >= average * BigInt(2)) {
     return { detected: true, deviationRatio, severity: "HIGH" };
   }
 
-  if (deviationRatio >= 1) {
+  if (deviation >= average) {
     return { detected: true, deviationRatio, severity: "MEDIUM" };
   }
 

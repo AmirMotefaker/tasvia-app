@@ -1,9 +1,11 @@
+import type { Money } from "../financial-safety/money";
+
 export interface SettlementRequest {
   id: string;
   businessId: string;
   supplierId: string;
   invoiceId: string;
   paymentRequestId: string;
-  amount: number;
+  amount: Money;
   requestedAt: Date;
 }
