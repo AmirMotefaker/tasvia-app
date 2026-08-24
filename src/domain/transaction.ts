@@ -1,8 +1,10 @@
+import type { Money } from "./financial-safety/money";
+
 export interface Transaction {
   id: string;
   paymentId: string;
   referenceNumber: string;
   bank?: string;
-  amount: number;
+  amount: Money;
   transactionDate: Date;
 }
