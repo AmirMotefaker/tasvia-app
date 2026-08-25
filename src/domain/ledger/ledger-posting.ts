@@ -1,4 +1,3 @@
-import type { Money } from "../financial-safety/money";
 import type { LedgerEntry } from "./ledger-entry";
 
 export interface LedgerPosting {
