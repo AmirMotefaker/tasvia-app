@@ -1,0 +1,17 @@
+{
+  "brand": "Tasvia",
+  "organization": "TasviaIR",
+  "repository": "TasviaIR/tasvia-app",
+  "logo": {
+    "concept": "clean geometric T monogram",
+    "diagonalStroke": false,
+    "style": "flat-minimal"
+  },
+  "colors": {
+    "ink": "#0B1220",
+    "navy": "#10243E",
+    "teal": "#00A99D",
+    "white": "#FFFFFF",
+    "mist": "#F4F7FA"
+  }
+}
