@@ -2,9 +2,35 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tasvia — Financial Operations Preview",
+  metadataBase: new URL("https://tasvia.ir"),
+  title: {
+    default: "تسویا | زیرساخت شفاف تسویه و عملیات مالی کسب‌وکارها",
+    template: "%s | تسویا",
+  },
   description:
-    "Tasvia product preview for transparent settlement, cash-flow visibility and financial intelligence.",
+    "تسویا یک پلتفرم برای مدیریت شفاف درخواست‌های تسویه، وضعیت پرداخت، شواهد مالی، تطبیق و گزارش‌پذیری کسب‌وکارها است.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    url: "https://tasvia.ir",
+    siteName: "تسویا",
+    title: "تسویا | زیرساخت شفاف تسویه و عملیات مالی کسب‌وکارها",
+    description:
+      "مدیریت شفاف جریان تسویه، وضعیت پرداخت، شواهد مالی و گزارش‌پذیری برای کسب‌وکارها.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "تسویا | زیرساخت شفاف تسویه و عملیات مالی کسب‌وکارها",
+    description:
+      "مدیریت شفاف جریان تسویه، وضعیت پرداخت و گزارش‌پذیری برای کسب‌وکارها.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

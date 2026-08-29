@@ -1,128 +1,160 @@
 import Link from "next/link";
 import Image from "next/image";
 
-const stats = [
-  { label: "موجودی قابل تسویه", value: "۱۲۸٬۴۵۰٬۰۰۰", unit: "ریال", meta: "نمونه پیش‌نمایش" },
-  { label: "تسویه‌های در انتظار", value: "۳", unit: "مورد", meta: "نیازمند بررسی" },
-  { label: "جریان نقدی خالص", value: "+۴۲٬۸۰۰٬۰۰۰", unit: "ریال", meta: "۳۰ روز گذشته" },
-  { label: "ریسک عملیاتی", value: "کم", unit: "", meta: "بر پایه داده نمایشی" },
+const features = [
+  ["درخواست تسویه", "فرآیند درخواست و بررسی تسویه را از پیام‌ها و فایل‌های پراکنده به یک مسیر قابل پیگیری منتقل کنید."],
+  ["شواهد و تطبیق", "رسیدها و شواهد به‌عنوان مدرک عملیات نگهداری می‌شوند و با وضعیت‌های قابل حسابرسی همراه هستند."],
+  ["دید مالی", "تصویر یکپارچه‌ای از وضعیت درخواست‌ها، مبالغ، ذی‌نفعان و تاریخچه عملیات داشته باشید."],
 ];
 
-const settlements = [
-  { supplier: "تامین‌کننده سپهر", amount: "۳۶٬۵۰۰٬۰۰۰ ریال", status: "آماده تسویه", href: "/settlements/tsv-1048" },
-  { supplier: "پخش آریا", amount: "۱۸٬۲۰۰٬۰۰۰ ریال", status: "نیازمند بررسی", href: "/settlements/tsv-1047" },
-  { supplier: "بازرگانی روشا", amount: "۹٬۷۵۰٬۰۰۰ ریال", status: "تطبیق‌شده", href: "/settlements/tsv-1046" },
+const steps = [
+  "ایجاد یا انتخاب کسب‌وکار",
+  "ثبت ذی‌نفع و مبلغ",
+  "بررسی جزئیات و شواهد",
+  "تأیید وضعیت در یک مسیر قابل پیگیری",
 ];
+
+const audiences = ["کافه و رستوران", "فروشگاه و خرده‌فروشی", "کسب‌وکار چندشعبه‌ای", "تیم‌های مالی و عملیاتی"];
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Tasvia",
+  alternateName: "تسویا",
+  url: "https://tasvia.ir",
+  logo: "https://tasvia.ir/brand/tasvia-avatar.svg",
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "تسویا",
+  alternateName: "Tasvia",
+  url: "https://tasvia.ir",
+  inLanguage: "fa-IR",
+};
 
 export default function Home() {
   return (
-    <main dir="rtl" className="min-h-screen bg-[#f4f7fb] text-[#0b1220]">
-      <div className="mx-auto min-h-screen max-w-[1480px] px-3 pb-28 pt-3 sm:px-4 sm:pt-4 lg:flex lg:gap-6 lg:px-6 lg:pb-6">
-        <aside className="hidden w-64 shrink-0 rounded-[28px] bg-[#0f223d] p-5 text-white lg:flex lg:flex-col">
-          <div className="mb-10 flex items-center gap-3">
-            <Image src="/brand/tasvia-avatar.svg" alt="Tasvia" width={44} height={44} priority className="rounded-2xl" />
+    <main className="min-h-screen bg-[#f4f7fb] text-[#0b1220]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+
+      <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f4f7fb]/90 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3" aria-label="صفحه اصلی تسویا">
+            <Image src="/brand/tasvia-avatar.svg" alt="لوگوی تسویا" width={40} height={40} priority className="rounded-2xl" />
             <div>
-              <div className="text-lg font-black tracking-tight">تسویا</div>
-              <div className="text-xs text-white/55">Tasvia Demo</div>
+              <div className="font-black">تسویا</div>
+              <div className="text-[10px] text-[#6e7888]">Tasvia</div>
             </div>
-          </div>
-          <nav className="space-y-2 text-sm">
-            <Link href="/" className="block rounded-2xl bg-white px-4 py-3 font-bold text-[#0f223d]">نمای کلی</Link>
-            <Link href="/settlements" className="block rounded-2xl px-4 py-3 text-white/70">تسویه‌ها</Link>
-            <Link href="/onboarding" className="block rounded-2xl px-4 py-3 text-white/70">کسب‌وکار</Link>
+          </Link>
+
+          <nav className="hidden items-center gap-5 text-sm font-bold text-[#4f5c6f] md:flex">
+            <Link href="/product">محصول</Link>
+            <Link href="/solutions">راهکارها</Link>
+            <Link href="/security">امنیت و شفافیت</Link>
+            <Link href="/pricing">تعرفه</Link>
+            <Link href="/about">درباره تسویا</Link>
           </nav>
-          <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4 text-xs leading-6 text-white/60">
-            Demo Mode فعال است؛ هیچ انتقال وجه واقعی انجام نمی‌شود.
+
+          <div className="flex items-center gap-2">
+            <Link href="/demo" className="rounded-2xl border border-black/10 px-4 py-2.5 text-xs font-extrabold">مشاهده دمو</Link>
+            <Link href="/contact" className="hidden rounded-2xl bg-[#0f223d] px-4 py-2.5 text-xs font-extrabold text-white sm:inline-flex">درخواست دسترسی</Link>
           </div>
-        </aside>
+        </div>
+      </header>
 
-        <section className="min-w-0 flex-1">
-          <header className="mb-4 rounded-[24px] border border-black/5 bg-white p-4 shadow-sm sm:mb-6 sm:rounded-[28px] sm:p-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <div className="mb-1 text-[11px] font-extrabold text-[#008f87] sm:text-xs">Demo Mode</div>
-                <h1 className="text-[22px] font-black leading-tight sm:text-3xl">مرکز عملیات مالی تسویا</h1>
-                <p className="mt-2 text-[13px] leading-6 text-[#637083] sm:text-sm">
-                  درخواست تسویه، وضعیت، نقدینگی و تاریخچه عملیات مالی در یک مسیر واحد
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:flex">
-                <Link href="/onboarding" className="min-h-11 rounded-2xl border border-black/10 px-4 py-3 text-center text-xs font-extrabold">
-                  مدیریت کسب‌وکار
-                </Link>
-                <Link href="/settlements/new" className="min-h-11 rounded-2xl bg-[#0f223d] px-4 py-3 text-center text-xs font-extrabold text-white">
-                  درخواست تسویه جدید
-                </Link>
-              </div>
-            </div>
-          </header>
+      <section className="mx-auto grid max-w-7xl gap-8 px-4 pb-12 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-8 lg:pb-20 lg:pt-24">
+        <div>
+          <div className="mb-4 inline-flex rounded-full border border-[#00a99d]/20 bg-[#eafaf8] px-3 py-2 text-xs font-black text-[#007d75]">
+            زیرساخت شفاف عملیات مالی کسب‌وکارها
+          </div>
+          <h1 className="max-w-4xl text-4xl font-black leading-[1.35] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+            تسویه کسب‌وکار را از یک فرایند پراکنده به یک جریان قابل پیگیری تبدیل کنید.
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-[#5f6c7e] sm:text-lg">
+            تسویا برای مدیریت درخواست‌های تسویه، وضعیت پرداخت، شواهد مالی، تطبیق و گزارش‌پذیری طراحی شده است؛ با تمرکز بر شفافیت عملیاتی و تجربه‌ای ساده برای تیم‌های مالی و صاحبان کسب‌وکار.
+          </p>
 
-          <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 sm:gap-4 xl:grid-cols-4">
-            {stats.map((stat) => (
-              <article key={stat.label} className="min-w-0 rounded-[22px] border border-black/5 bg-white p-4 shadow-sm sm:p-5">
-                <div className="text-[12px] leading-5 text-[#6d7889] sm:text-sm">{stat.label}</div>
-                <div className="mt-2 flex flex-wrap items-baseline gap-1">
-                  <span className="text-[18px] font-black leading-tight sm:text-xl">{stat.value}</span>
-                  {stat.unit ? <span className="text-[10px] font-bold text-[#718096] sm:text-xs">{stat.unit}</span> : null}
-                </div>
-                <div className="mt-2 text-[10px] font-bold text-[#00a99d] sm:text-xs">{stat.meta}</div>
-              </article>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/contact" className="min-h-12 rounded-2xl bg-[#0f223d] px-6 py-3.5 text-center text-sm font-black text-white">درخواست دسترسی اولیه</Link>
+            <Link href="/demo" className="min-h-12 rounded-2xl border border-black/10 bg-white px-6 py-3.5 text-center text-sm font-black">مشاهده جریان دمو</Link>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-2">
+            {audiences.map((item) => (
+              <span key={item} className="rounded-full border border-black/5 bg-white px-3 py-2 text-xs font-bold text-[#586577]">{item}</span>
             ))}
           </div>
+        </div>
 
-          <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-            <article className="rounded-[24px] border border-black/5 bg-white p-4 shadow-sm sm:rounded-[28px] sm:p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="text-base font-black sm:text-lg">تسویه‌های اخیر</h2>
-                  <p className="mt-1 text-[11px] text-[#768195] sm:text-xs">برای مشاهده جزئیات روی هر مورد بزن</p>
-                </div>
-                <Link href="/settlements" className="rounded-xl border border-black/10 px-3 py-2 text-[11px] font-extrabold sm:text-xs">
-                  مشاهده همه
-                </Link>
+        <div className="rounded-[32px] border border-black/5 bg-[#0f223d] p-5 text-white shadow-[0_30px_80px_rgba(15,34,61,0.18)] sm:p-7">
+          <div className="text-xs font-black text-[#63dfd4]">نمونه تجربه تسویا</div>
+          <div className="mt-3 text-2xl font-black">مسیر شفاف یک تسویه</div>
+          <div className="mt-6 space-y-3">
+            {steps.map((step, index) => (
+              <div key={step} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white text-sm font-black text-[#0f223d]">{index + 1}</div>
+                <div className="pt-1 text-sm font-bold text-white/90">{step}</div>
               </div>
-
-              <div className="space-y-3">
-                {settlements.map((row) => (
-                  <Link key={row.supplier} href={row.href} className="block rounded-2xl border border-black/5 p-4 transition hover:border-[#00a99d]/40">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="font-extrabold">{row.supplier}</div>
-                        <div className="mt-2 text-[13px] font-bold text-[#556174]">{row.amount}</div>
-                      </div>
-                      <span className="rounded-full bg-[#eef3f8] px-3 py-1 text-[10px] font-extrabold text-[#304157]">{row.status}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </article>
-
-            <div className="space-y-4">
-              <article className="rounded-[24px] bg-[#0f223d] p-4 text-white shadow-sm sm:rounded-[28px] sm:p-5">
-                <div className="text-[11px] font-extrabold text-[#63dfd4]">Tasvia Intelligence</div>
-                <h2 className="mt-2 text-lg font-black">اقدام پیشنهادی امروز</h2>
-                <p className="mt-4 text-[13px] leading-7 text-white/80">
-                  سه درخواست تسویه در Demo Mode نیازمند بررسی هستند. قبل از تایید، مبلغ و ذی‌نفع را کنترل کن.
-                </p>
-              </article>
-
-              <article className="rounded-[24px] border border-[#f1d9a5] bg-[#fffaf0] p-4 sm:rounded-[28px] sm:p-5">
-                <div className="text-[13px] font-black text-[#7d5a13]">حالت پیش‌نمایش امن</div>
-                <p className="mt-2 text-[11px] leading-6 text-[#8a7343]">
-                  همه عملیات این نسخه شبیه‌سازی‌شده‌اند و هیچ پرداخت یا تسویه واقعی انجام نمی‌شود.
-                </p>
-              </article>
-            </div>
+            ))}
           </div>
-        </section>
-      </div>
+          <div className="mt-5 rounded-2xl bg-[#132b4b] p-4 text-xs leading-6 text-white/70">
+            نسخه دمو هیچ انتقال وجه، اتصال بانکی یا عملیات واقعی پرداخت انجام نمی‌دهد.
+          </div>
+        </div>
+      </section>
 
-      <nav aria-label="ناوبری اصلی موبایل" className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-[24px] border border-black/10 bg-white/95 p-2 shadow-[0_12px_40px_rgba(15,34,61,0.18)] backdrop-blur lg:hidden">
-        <Link href="/" className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl bg-[#0f223d] px-1 text-[10px] font-extrabold text-white"><span className="text-lg">⌂</span><span>خانه</span></Link>
-        <Link href="/settlements" className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-extrabold text-[#667085]"><span className="text-lg">⇄</span><span>تسویه‌ها</span></Link>
-        <Link href="/settlements/new" className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-extrabold text-[#667085]"><span className="text-lg">＋</span><span>جدید</span></Link>
-        <Link href="/onboarding" className="flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-2xl px-1 text-[10px] font-extrabold text-[#667085]"><span className="text-lg">▤</span><span>کسب‌وکار</span></Link>
-      </nav>
+      <section className="border-y border-black/5 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
+          {features.map(([title, text]) => (
+            <article key={title} className="rounded-[24px] border border-black/5 bg-[#f8fafc] p-5">
+              <h2 className="text-lg font-black">{title}</h2>
+              <p className="mt-3 text-sm leading-7 text-[#657184]">{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+          <div>
+            <div className="text-xs font-black text-[#008f87]">چرا تسویا؟</div>
+            <h2 className="mt-3 text-3xl font-black leading-[1.45]">برای وقتی که پیام، رسید، اکسل و پیگیری دستی دیگر کافی نیست.</h2>
+          </div>
+          <div className="space-y-4 text-sm leading-8 text-[#5f6c7e]">
+            <p>هدف تسویا این است که عملیات مالی روزمره کسب‌وکارها قابل مشاهده، قابل پیگیری و قابل توضیح باشد. هر وضعیت باید دلیل و تاریخچه مشخص داشته باشد.</p>
+            <p>ما درباره «تأیید بانکی» یا «تسویه قطعی» ادعای خودکار نمی‌کنیم مگر زمانی که یک منبع معتبر پرداخت یا بانکی آن را تأیید کند. این تفکیک برای اعتماد و حسابرسی ضروری است.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#0f223d] text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+          <div>
+            <div className="text-xs font-black text-[#63dfd4]">دسترسی اولیه تسویا</div>
+            <h2 className="mt-2 text-2xl font-black">برای پایلوت و همکاری محصول با ما در ارتباط باشید.</h2>
+          </div>
+          <Link href="/contact" className="rounded-2xl bg-white px-6 py-3.5 text-center text-sm font-black text-[#0f223d]">شروع گفتگو</Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-black/5 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 text-sm sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
+          <div>
+            <div className="font-black">تسویا</div>
+            <p className="mt-2 max-w-xl text-xs leading-6 text-[#758094]">زیرساخت مدیریت شفاف درخواست‌های تسویه و عملیات مالی کسب‌وکارها.</p>
+          </div>
+          <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs font-bold text-[#596678]">
+            <Link href="/product">محصول</Link>
+            <Link href="/security">امنیت</Link>
+            <Link href="/pricing">تعرفه</Link>
+            <Link href="/about">درباره</Link>
+            <Link href="/contact">تماس</Link>
+          </nav>
+        </div>
+      </footer>
     </main>
   );
 }
