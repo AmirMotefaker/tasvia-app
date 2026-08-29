@@ -165,7 +165,9 @@ export default function Home() {
             <Link href="/security">امنیت</Link>
             <Link href="/pricing">تعرفه</Link>
             <Link href="/about">درباره</Link>
-            <Link href="/developers">توسعه‌دهندگان</Link>`n            <Link href="/faq">FAQ</Link>`n            <Link href="/contact">تماس</Link>
+            <Link href="/developers">توسعه‌دهندگان</Link>
+            <Link href="/faq">FAQ</Link>
+            <Link href="/contact">تماس</Link>
           </nav>
         </div>
       </footer>
