@@ -130,6 +130,20 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-y border-black/5 bg-[#eef3f8]">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-xs font-black text-[#008f87]">فراتر از تأیید یک پرداخت</div>
+            <h2 className="mt-3 text-3xl font-black leading-[1.45]">تسویا برای کل عملیات تسویه و تصویر مالی اطراف آن ساخته می‌شود.</h2>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Link href="/settlement-management" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">PREVIEW</div><div className="mt-2 font-black">مدیریت تسویه</div></Link>
+            <Link href="/financial-intelligence" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">FOUNDATION</div><div className="mt-2 font-black">هوشمندی مالی</div></Link>
+            <Link href="/integrations" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#9a7410]">ROADMAP</div><div className="mt-2 font-black">یکپارچه‌سازی‌ها</div></Link>
+            <Link href="/compare/variza" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#596678]">TRANSPARENT</div><div className="mt-2 font-black">مقایسه با واریزا</div></Link>
+          </div>
+        </div>
+      </section>
       <section className="bg-[#0f223d] text-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <div>
@@ -151,7 +165,7 @@ export default function Home() {
             <Link href="/security">امنیت</Link>
             <Link href="/pricing">تعرفه</Link>
             <Link href="/about">درباره</Link>
-            <Link href="/contact">تماس</Link>
+            <Link href="/developers">توسعه‌دهندگان</Link>`n            <Link href="/faq">FAQ</Link>`n            <Link href="/contact">تماس</Link>
           </nav>
         </div>
       </footer>
