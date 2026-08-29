@@ -16,6 +16,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/ci
       DIRECT_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/ci
+      BETTER_AUTH_SECRET: CI_ONLY_BETTER_AUTH_SECRET_32_CHARS_MINIMUM_NOT_FOR_RUNTIME
 
     steps:
       - name: Checkout
