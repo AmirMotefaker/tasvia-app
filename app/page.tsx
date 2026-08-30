@@ -137,10 +137,10 @@ export default function Home() {
             <h2 className="mt-3 text-3xl font-black leading-[1.45]">تسویا برای کل عملیات تسویه و تصویر مالی اطراف آن ساخته می‌شود.</h2>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Link href="/settlement-management" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">PREVIEW</div><div className="mt-2 font-black">مدیریت تسویه</div></Link>
-            <Link href="/financial-intelligence" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">FOUNDATION</div><div className="mt-2 font-black">هوشمندی مالی</div></Link>
-            <Link href="/integrations" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#9a7410]">ROADMAP</div><div className="mt-2 font-black">یکپارچه‌سازی‌ها</div></Link>
-            <Link href="/compare/variza" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#596678]">TRANSPARENT</div><div className="mt-2 font-black">مقایسه با واریزا</div></Link>
+            <Link href="/settlement-management" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">در حال تکمیل</div><div className="mt-2 font-black">مدیریت تسویه</div></Link>
+            <Link href="/financial-intelligence" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">هسته محصول</div><div className="mt-2 font-black">هوشمندی مالی</div></Link>
+            <Link href="/integrations" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#9a7410]">برنامه توسعه</div><div className="mt-2 font-black">یکپارچه‌سازی‌ها</div></Link>
+            <Link href="/compare/variza" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#596678]">مقایسه شفاف</div><div className="mt-2 font-black">مقایسه با واریزا</div></Link>
           </div>
         </div>
       </section>
