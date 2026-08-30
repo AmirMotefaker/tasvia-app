@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SITE_URL } from "../src/config/site";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tasvia.ir"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "تسویا | زیرساخت شفاف تسویه و عملیات مالی کسب‌وکارها",
     template: "%s | تسویا",
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fa_IR",
-    url: "https://tasvia.ir",
+    url: SITE_URL,
     siteName: "تسویا",
     title: "تسویا | زیرساخت شفاف تسویه و عملیات مالی کسب‌وکارها",
     description:
@@ -33,7 +34,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
       <body>{children}</body>
