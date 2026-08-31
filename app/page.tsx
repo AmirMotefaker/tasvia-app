@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { SITE_URL } from "../src/config/site";
 
 const features = [
   ["درخواست تسویه", "فرآیند درخواست و بررسی تسویه را از پیام‌ها و فایل‌های پراکنده به یک مسیر قابل پیگیری منتقل کنید."],
@@ -21,8 +22,8 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "Tasvia",
   alternateName: "تسویا",
-  url: "https://tasvia.ir",
-  logo: "https://tasvia.ir/brand/tasvia-avatar.svg",
+  url: SITE_URL,
+  logo: `${SITE_URL}/brand/tasvia-avatar.svg`,
 };
 
 const websiteJsonLd = {
@@ -30,7 +31,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "تسویا",
   alternateName: "Tasvia",
-  url: "https://tasvia.ir",
+  url: SITE_URL,
   inLanguage: "fa-IR",
 };
 
