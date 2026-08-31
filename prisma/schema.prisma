@@ -46,7 +46,6 @@ model User {
   emailVerified Boolean      @default(false)
   image         String?
   phone         String?      @unique
-  password      String?
   role          Role         @default(MERCHANT)
   merchant      Merchant?
   sessions      Session[]
@@ -71,6 +70,7 @@ model Session {
 
 model Account {
   id                    String   @id @default(uuid())
+  issuer                String
   accountId             String
   providerId            String
   userId                String
@@ -85,7 +85,7 @@ model Account {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   @@index([userId])
-  @@unique([providerId, accountId])
+  @@unique([issuer, accountId])
 }
 
 model Verification {
