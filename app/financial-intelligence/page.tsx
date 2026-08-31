@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "هوشمندی مالی",
-  description: "بنیان هوشمندی مالی، دفتر کل، ژورنال و صورت‌های مالی در معماری تسویا.",
+  description: "بنیان هوشمندی مالی، دفتر کل، ژورنال و صورت‌های مالی در معماری تسوین.",
   alternates: { canonical: "/financial-intelligence" },
 };
 
@@ -16,7 +16,7 @@ export default function Page() {
   return (
     <main className="min-h-screen bg-[#0f223d] px-4 py-12 text-white sm:px-6">
       <div className="mx-auto max-w-5xl">
-        <div className="text-xs font-black text-[#63dfd4]">Tasvia Financial Intelligence</div>
+        <div className="text-xs font-black text-[#63dfd4]">Tasvin Financial Intelligence</div>
         <h1 className="mt-3 text-4xl font-black leading-[1.4]">از وضعیت تسویه تا تصویر مالی قابل توضیح</h1>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {items.map(([status,title,text])=>(

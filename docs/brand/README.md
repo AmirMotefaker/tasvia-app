@@ -1,9 +1,9 @@
-# Tasvia Brand Foundation
+# Tasvin Brand Foundation
 
-Canonical repository: `TasviaIR/tasvia-app`
+Canonical repository: `TasvinIR/tasvia-app`
 
 ## Brand direction
-Tasvia is a financial operations and settlement platform. The identity must communicate precision, trust, transparent settlement, operational intelligence, and modern financial infrastructure.
+Tasvin is a financial operations and settlement platform. The identity must communicate precision, trust, transparent settlement, operational intelligence, and modern financial infrastructure.
 
 ## Primary mark
 The canonical mark is a clean geometric **T** monogram.
@@ -16,15 +16,15 @@ Rules:
 - The mark must remain legible at favicon and GitHub avatar sizes.
 
 ## Canonical wordmark
-**Tasvia**
+**Tasvin**
 
-Organization: **TasviaIR**
+Organization: **TasvinIR**
 
 ## Asset structure
-- `public/brand/tasvia-mark.svg`
-- `public/brand/tasvia-mark-dark.svg`
-- `public/brand/tasvia-wordmark.svg`
-- `public/brand/tasvia-avatar.svg`
+- `public/brand/tasvin-mark.svg`
+- `public/brand/tasvin-mark-dark.svg`
+- `public/brand/tasvin-wordmark.svg`
+- `public/brand/tasvin-avatar.svg`
 - `docs/brand/brand-tokens.json`
 
 ## GitHub governance

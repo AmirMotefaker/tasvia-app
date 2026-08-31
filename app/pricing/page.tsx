@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "تعرفه و مدل ارائه",
-  description: "مدل ارائه شفاف تسویا برای پایلوت، تیم‌های مالی و کسب‌وکارهای در حال رشد.",
+  description: "مدل ارائه شفاف تسوین برای پایلوت، تیم‌های مالی و کسب‌وکارهای در حال رشد.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -33,7 +33,7 @@ export default function PricingPage() {
           <div className="text-xs font-black text-[#008f87]">مدل ارائه</div>
           <h1 className="mt-3 text-4xl font-black leading-[1.35]">قیمت‌گذاری شفاف، بدون وعده‌ای که هنوز آماده نیست.</h1>
           <p className="mt-5 text-base leading-8 text-[#657184]">
-            تسویا هنوز در مرحله دسترسی اولیه است. عدد نهایی تعرفه عمومی بعد از تثبیت دامنه محصول منتشر می‌شود؛ اما ساختار ارائه از همین حالا روشن است.
+            تسوین هنوز در مرحله دسترسی اولیه است. عدد نهایی تعرفه عمومی بعد از تثبیت دامنه محصول منتشر می‌شود؛ اما ساختار ارائه از همین حالا روشن است.
           </p>
         </div>
         <section className="mt-8 grid gap-4 lg:grid-cols-3">

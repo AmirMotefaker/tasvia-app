@@ -3,7 +3,7 @@ Status: application/schema foundation only. No production migration.
 
 ## Boundaries
 Better Auth owns identity, accounts, sessions and verification.
-Tasvia owns Workspace, Membership, WorkspaceRole and financial authorization.
+Tasvin owns Workspace, Membership, WorkspaceRole and financial authorization.
 Authentication never implies financial/workspace authorization.
 
 ## Legacy compatibility

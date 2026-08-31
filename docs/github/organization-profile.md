@@ -1,13 +1,13 @@
-# TasviaIR GitHub Organization Profile Source
+# TasvinIR GitHub Organization Profile Source
 
-# Tasvia
+# Tasvin
 
 **Financial operations infrastructure for transparent settlement, accounting intelligence, and safer business cash flow.**
 
-Tasvia is building a modern financial operating layer for businesses, with an emphasis on exact money handling, traceable settlement decisions, double-entry accounting foundations, financial statements, and explainable financial intelligence.
+Tasvin is building a modern financial operating layer for businesses, with an emphasis on exact money handling, traceable settlement decisions, double-entry accounting foundations, financial statements, and explainable financial intelligence.
 
 ## Official repository
-- `TasviaIR/tasvia-app`
+- `TasvinIR/tasvia-app`
 
 ## Current platform foundations
 - Exact IRR Money primitive

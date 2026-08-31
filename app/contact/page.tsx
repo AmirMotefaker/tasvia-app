@@ -4,7 +4,7 @@ import { LeadForm } from "./lead-form";
 
 export const metadata: Metadata = {
   title: "تماس و درخواست پایلوت",
-  description: "درخواست پایلوت و دسترسی اولیه به تسویا برای تیم‌های مالی و کسب‌وکارها.",
+  description: "درخواست پایلوت و دسترسی اولیه به تسوین برای تیم‌های مالی و کسب‌وکارها.",
   alternates: { canonical: "/contact" },
 };
 
@@ -21,7 +21,7 @@ export default function ContactPage() {
         <section className="grid gap-5 lg:grid-cols-[.9fr_1.1fr]">
           <div className="space-y-5">
             <div className="rounded-[32px] bg-[#0f223d] p-7 text-white sm:p-10">
-              <div className="text-xs font-black text-[#63dfd4]">ارتباط با تسویا</div>
+              <div className="text-xs font-black text-[#63dfd4]">ارتباط با تسوین</div>
               <h1 className="mt-3 text-4xl font-black leading-[1.4]">از یک مسئله واقعی مالی شروع کنیم.</h1>
               <p className="mt-5 max-w-xl text-sm leading-8 text-white/65">
                 در دسترسی اولیه، هدف فروش یک وعده نیست؛ مسئله عملیاتی، گردش‌کار و معیار موفقیت پایلوت را مشخص می‌کنیم.

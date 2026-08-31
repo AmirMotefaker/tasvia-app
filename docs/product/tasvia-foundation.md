@@ -1,8 +1,8 @@
-# Tasvia Foundation v1.0
+# Tasvin Foundation v1.0
 
 ## Product
 
-Tasvia
+Tasvin
 
 ## Vision
 
@@ -59,4 +59,3 @@ Transactions are matched with invoices.
 Financial history and operational reports are generated.
 
 ## Future Vision
-

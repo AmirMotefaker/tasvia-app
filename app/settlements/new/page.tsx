@@ -14,7 +14,7 @@ export default function NewSettlementPage() {
           <label className="block">
             <span className="mb-2 block text-xs font-extrabold">کسب‌وکار</span>
             <select className="min-h-12 w-full rounded-2xl border border-black/10 bg-white px-3 text-sm outline-none focus:border-[#00a99d]">
-              <option>کافه نمونه تسویا</option><option>شعبه دوم نمونه</option>
+              <option>کافه نمونه تسوین</option><option>شعبه دوم نمونه</option>
             </select>
           </label>
 

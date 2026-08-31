@@ -25,7 +25,7 @@ export default function WorkspacePage(){
   <header className="border-b border-black/5 bg-white">
    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
     <div className="flex items-center justify-between gap-4">
-     <div><div className="text-lg font-black">تسویا</div><div className="text-[11px] text-[#6f7a8b]">مرکز عملیات مالی</div></div>
+     <div><div className="text-lg font-black">تسوین</div><div className="text-[11px] text-[#6f7a8b]">مرکز عملیات مالی</div></div>
      <Link href="/sign-in" className="rounded-xl border border-black/10 px-3 py-2 text-xs font-black">حساب کاربری</Link>
     </div>
     <div className="mt-4"><WorkspaceNav /></div>

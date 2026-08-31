@@ -7,7 +7,7 @@ const secret = process.env.BETTER_AUTH_SECRET;
 export const authConfigured = Boolean(secret && secret.length >= 32);
 
 export const auth = betterAuth({
-  appName: "Tasvia",
+  appName: "Tasvin",
   secret: authConfigured
     ? secret
     : "tasvia-build-only-fallback-secret-32-characters-minimum",

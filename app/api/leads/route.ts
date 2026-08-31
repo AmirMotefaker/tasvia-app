@@ -23,7 +23,7 @@ function rateLimited(key: string) {
 async function deliverLead(payload: Record<string, unknown>) {
   const webhook = process.env.LEAD_CAPTURE_WEBHOOK_URL?.trim();
   if (!webhook) {
-    console.info("tasvia.lead.received", payload);
+    console.info("tasvin.lead.received", payload);
     return { sink: "application-log" as const };
   }
 
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       delivery: delivery.sink,
     });
   } catch (error) {
-    console.error("tasvia.lead.delivery_failed", { reference, error: error instanceof Error ? error.message : "unknown" });
+    console.error("tasvin.lead.delivery_failed", { reference, error: error instanceof Error ? error.message : "unknown" });
     return NextResponse.json(
       { ok: false, reference, message: "ارسال درخواست موقتاً ناموفق بود. چند دقیقه دیگر دوباره تلاش کنید." },
       { status: 503 },

@@ -11,7 +11,7 @@ export function createFinancialIntelligenceAuditEvent(
       : "RECONCILIATION_REQUESTED",
     actor: {
       type: "SYSTEM",
-      displayName: "Tasvia Financial Intelligence",
+      displayName: "Tasvin Financial Intelligence",
     },
     entityType: "FINANCIAL_OPERATION",
     entityId,

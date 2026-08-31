@@ -13,7 +13,7 @@ export default async function WorkspaceLayout({
     return (
       <main className="min-h-screen bg-[#f3f6fa] px-4 py-12 text-[#0b1220] sm:px-6">
         <div className="mx-auto max-w-xl rounded-[32px] border border-black/5 bg-white p-7 shadow-sm sm:p-9">
-          <div className="text-xs font-black text-[#008f87]">پیش‌نمایش امن تسویا</div>
+          <div className="text-xs font-black text-[#008f87]">پیش‌نمایش امن تسوین</div>
           <h1 className="mt-3 text-3xl font-black">محیط کاری در این Preview به احراز هویت متصل نشده است.</h1>
           <p className="mt-4 text-sm leading-7 text-[#657184]">
             صفحات عمومی برای بررسی طراحی و تجربه کاربری در دسترس‌اند، اما ورود و Workspace تا زمانی که Secret و دیتابیس غیرProduction معتبر برای Preview تنظیم نشوند، عمداً غیرفعال می‌مانند.
@@ -43,7 +43,7 @@ export default async function WorkspaceLayout({
     return (
       <main className="min-h-screen bg-[#f3f6fa] px-4 py-12 text-[#0b1220] sm:px-6">
         <div className="mx-auto max-w-xl rounded-[32px] border border-black/5 bg-white p-7 shadow-sm sm:p-9">
-          <div className="text-xs font-black text-[#008f87]">کنترل دسترسی تسویا</div>
+          <div className="text-xs font-black text-[#008f87]">کنترل دسترسی تسوین</div>
           <h1 className="mt-3 text-3xl font-black">محیط کاری فعالی برای این حساب پیدا نشد.</h1>
           <p className="mt-4 text-sm leading-7 text-[#657184]">
             ورود موفق بوده است، اما دسترسی مالی فقط با عضویت فعال در یک Workspace مجاز می‌شود.

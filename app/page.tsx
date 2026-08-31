@@ -20,17 +20,17 @@ const audiences = ["کافه و رستوران", "فروشگاه و خرده‌�
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Tasvia",
-  alternateName: "تسویا",
+  name: "Tasvin",
+  alternateName: "تسوین",
   url: SITE_URL,
-  logo: `${SITE_URL}/brand/tasvia-avatar.svg`,
+  logo: `${SITE_URL}/brand/tasvin-avatar.svg`,
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "تسویا",
-  alternateName: "Tasvia",
+  name: "تسوین",
+  alternateName: "Tasvin",
   url: SITE_URL,
   inLanguage: "fa-IR",
 };
@@ -43,11 +43,11 @@ export default function Home() {
 
       <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f4f7fb]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3" aria-label="صفحه اصلی تسویا">
-            <Image src="/brand/tasvia-avatar.svg" alt="لوگوی تسویا" width={40} height={40} priority className="rounded-2xl" />
+          <Link href="/" className="flex items-center gap-3" aria-label="صفحه اصلی تسوین">
+            <Image src="/brand/tasvin-avatar.svg" alt="لوگوی تسوین" width={40} height={40} priority className="rounded-2xl" />
             <div>
-              <div className="font-black">تسویا</div>
-              <div className="text-[10px] text-[#6e7888]">Tasvia</div>
+              <div className="font-black">تسوین</div>
+              <div className="text-[10px] text-[#6e7888]">Tasvin</div>
             </div>
           </Link>
 
@@ -56,11 +56,12 @@ export default function Home() {
             <Link href="/solutions">راهکارها</Link>
             <Link href="/security">امنیت و شفافیت</Link>
             <Link href="/pricing">تعرفه</Link>
-            <Link href="/about">درباره تسویا</Link>
+            <Link href="/about">درباره تسوین</Link>
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href="/demo" className="rounded-2xl border border-black/10 px-4 py-2.5 text-xs font-extrabold">مشاهده دمو</Link>
+            <Link href="/sign-in" className="hidden rounded-2xl border border-black/10 px-4 py-2.5 text-xs font-extrabold sm:inline-flex">ورود</Link>
+            <Link href="/demo" className="rounded-2xl border border-black/10 px-4 py-2.5 text-xs font-extrabold">دمو</Link>
             <Link href="/contact" className="hidden rounded-2xl bg-[#0f223d] px-4 py-2.5 text-xs font-extrabold text-white sm:inline-flex">درخواست دسترسی</Link>
           </div>
         </div>
@@ -75,7 +76,7 @@ export default function Home() {
             تسویه کسب‌وکار را از یک فرایند پراکنده به یک جریان قابل پیگیری تبدیل کنید.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-[#5f6c7e] sm:text-lg">
-            تسویا برای مدیریت درخواست‌های تسویه، وضعیت پرداخت، شواهد مالی، تطبیق و گزارش‌پذیری طراحی شده است؛ با تمرکز بر شفافیت عملیاتی و تجربه‌ای ساده برای تیم‌های مالی و صاحبان کسب‌وکار.
+            تسوین برای مدیریت درخواست‌های تسویه، وضعیت پرداخت، شواهد مالی، تطبیق و گزارش‌پذیری طراحی شده است؛ با تمرکز بر شفافیت عملیاتی و تجربه‌ای ساده برای تیم‌های مالی و صاحبان کسب‌وکار.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -91,7 +92,7 @@ export default function Home() {
         </div>
 
         <div className="rounded-[32px] border border-black/5 bg-[#0f223d] p-5 text-white shadow-[0_30px_80px_rgba(15,34,61,0.18)] sm:p-7">
-          <div className="text-xs font-black text-[#63dfd4]">نمونه تجربه تسویا</div>
+          <div className="text-xs font-black text-[#63dfd4]">نمونه تجربه تسوین</div>
           <div className="mt-3 text-2xl font-black">مسیر شفاف یک تسویه</div>
           <div className="mt-6 space-y-3">
             {steps.map((step, index) => (
@@ -121,11 +122,11 @@ export default function Home() {
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
-            <div className="text-xs font-black text-[#008f87]">چرا تسویا؟</div>
+            <div className="text-xs font-black text-[#008f87]">چرا تسوین؟</div>
             <h2 className="mt-3 text-3xl font-black leading-[1.45]">برای وقتی که پیام، رسید، اکسل و پیگیری دستی دیگر کافی نیست.</h2>
           </div>
           <div className="space-y-4 text-sm leading-8 text-[#5f6c7e]">
-            <p>هدف تسویا این است که عملیات مالی روزمره کسب‌وکارها قابل مشاهده، قابل پیگیری و قابل توضیح باشد. هر وضعیت باید دلیل و تاریخچه مشخص داشته باشد.</p>
+            <p>هدف تسوین این است که عملیات مالی روزمره کسب‌وکارها قابل مشاهده، قابل پیگیری و قابل توضیح باشد. هر وضعیت باید دلیل و تاریخچه مشخص داشته باشد.</p>
             <p>ما درباره «تأیید بانکی» یا «تسویه قطعی» ادعای خودکار نمی‌کنیم مگر زمانی که یک منبع معتبر پرداخت یا بانکی آن را تأیید کند. این تفکیک برای اعتماد و حسابرسی ضروری است.</p>
           </div>
         </div>
@@ -135,7 +136,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <div className="text-xs font-black text-[#008f87]">فراتر از تأیید یک پرداخت</div>
-            <h2 className="mt-3 text-3xl font-black leading-[1.45]">تسویا برای کل عملیات تسویه و تصویر مالی اطراف آن ساخته می‌شود.</h2>
+            <h2 className="mt-3 text-3xl font-black leading-[1.45]">تسوین برای کل عملیات تسویه و تصویر مالی اطراف آن ساخته می‌شود.</h2>
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Link href="/settlement-management" className="rounded-3xl bg-white p-5"><div className="text-[10px] font-black text-[#008f87]">در حال تکمیل</div><div className="mt-2 font-black">مدیریت تسویه</div></Link>
@@ -148,7 +149,7 @@ export default function Home() {
       <section className="bg-[#0f223d] text-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <div>
-            <div className="text-xs font-black text-[#63dfd4]">دسترسی اولیه تسویا</div>
+            <div className="text-xs font-black text-[#63dfd4]">دسترسی اولیه تسوین</div>
             <h2 className="mt-2 text-2xl font-black">برای پایلوت و همکاری محصول با ما در ارتباط باشید.</h2>
           </div>
           <Link href="/contact" className="rounded-2xl bg-white px-6 py-3.5 text-center text-sm font-black text-[#0f223d]">شروع گفتگو</Link>
@@ -158,7 +159,7 @@ export default function Home() {
       <footer className="border-t border-black/5 bg-white">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 text-sm sm:px-6 md:grid-cols-[1fr_auto] lg:px-8">
           <div>
-            <div className="font-black">تسویا</div>
+            <div className="font-black">تسوین</div>
             <p className="mt-2 max-w-xl text-xs leading-6 text-[#758094]">زیرساخت مدیریت شفاف درخواست‌های تسویه و عملیات مالی کسب‌وکارها.</p>
           </div>
           <nav className="flex flex-wrap gap-x-5 gap-y-3 text-xs font-bold text-[#596678]">
