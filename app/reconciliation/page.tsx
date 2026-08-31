@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "تطبیق و مغایرت‌گیری",
-  description: "چشم‌انداز تطبیق شواهد و عملیات مالی در تسویا.",
+  description: "چشم‌انداز تطبیق شواهد و عملیات مالی در تسوین.",
   alternates: { canonical: "/reconciliation" },
 };
 

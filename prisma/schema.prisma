@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,61 +8,143 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// نقش کاربران در سیستم
 enum Role {
   ADMIN
-  MERCHANT // کافه‌دار یا رستوران‌دار
+  MERCHANT
 }
 
-// نوع تراکنش‌های مالی
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  FINANCE
+  VIEWER
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+}
+
 enum TransactionType {
-  DEPOSIT        // واریز (پرداخت مشتری درگاه)
-  WITHDRAWAL     // برداشت (تسویه کافه‌دار به شبای خودش)
-  SHIFT_PAYMENT  // انتقال دین (پرداخت مستقیم مشتری به تامین‌کننده کافه)
+  DEPOSIT
+  WITHDRAWAL
+  SHIFT_PAYMENT
 }
 
-// وضعیت تراکنش
 enum TransactionStatus {
-  PENDING   // در انتظار (مشتری در حال پرداخت است)
-  SUCCESS   // موفق
-  FAILED    // ناموفق
-  REVERSED  // برگشت خورده
+  PENDING
+  SUCCESS
+  FAILED
+  REVERSED
 }
 
 model User {
-  id        String    @id @default(uuid())
-  phone     String    @unique // شماره موبایل کاربر
-  password  String?
-  role      Role      @default(MERCHANT)
-  merchant  Merchant?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            String       @id @default(uuid())
+  name          String?
+  email         String?      @unique
+  emailVerified Boolean      @default(false)
+  image         String?
+  phone         String?      @unique
+  role          Role         @default(MERCHANT)
+  merchant      Merchant?
+  sessions      Session[]
+  accounts      Account[]
+  memberships   Membership[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Account {
+  id                    String   @id @default(uuid())
+  issuer                String
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  @@index([userId])
+  @@unique([issuer, accountId])
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([identifier])
+}
+
+model Workspace {
+  id          String       @id @default(uuid())
+  name        String
+  slug        String       @unique
+  memberships Membership[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Membership {
+  id          String           @id @default(uuid())
+  userId      String
+  workspaceId String
+  role        WorkspaceRole    @default(VIEWER)
+  status      MembershipStatus @default(ACTIVE)
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  @@unique([userId, workspaceId])
+  @@index([workspaceId, status])
+  @@index([userId, status])
 }
 
 model Merchant {
-  id        String        @id @default(uuid())
-  userId    String        @unique
-  user      User          @relation(fields: [userId], references: [id])
-  name      String        // نام کافه یا رستوران
-  iban      String?       // شماره شبا برای تسویه حساب
-  status    String        @default("PENDING") // PENDING, APPROVED, SUSPENDED
+  id           String        @id @default(uuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id])
+  name         String
+  iban         String?
+  status       String        @default("PENDING")
   transactions Transaction[]
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Transaction {
-  id             String             @id @default(uuid())
-  merchantId     String
-  merchant       Merchant           @relation(fields: [merchantId], references: [id])
-  amount         Int                // مبلغ به ریال
-  type           TransactionType
-  status         TransactionStatus  @default(PENDING)
-  trackingCode   String?            // کد پیگیری بانکی (از سمت PSP)
-  orderRef       String?            // شماره فاکتور/سفارش داخلی کافه
-  targetIban     String?            // شبا شخص ثالث (فقط برای نوع SHIFT_PAYMENT)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-
-  @@index([merchantId]) // برای سرعت بالا در جستجوی تراکنش‌های یک کافه
+  id           String            @id @default(uuid())
+  merchantId   String
+  merchant     Merchant          @relation(fields: [merchantId], references: [id])
+  amount       Int
+  type         TransactionType
+  status       TransactionStatus @default(PENDING)
+  trackingCode String?
+  orderRef     String?
+  targetIban   String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  @@index([merchantId])
 }

@@ -10,5 +10,5 @@ export const SITE_URL = normalizeSiteUrl(
     FALLBACK_SITE_URL,
 );
 
-export const SITE_NAME = "تسویا";
-export const SITE_NAME_EN = "Tasvia";
+export const SITE_NAME = "تسوین";
+export const SITE_NAME_EN = "Tasvin";

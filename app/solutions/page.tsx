@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "راهکارها",
-  description: "کاربردهای تسویا برای کافه، رستوران، خرده‌فروشی و کسب‌وکارهای چندشعبه‌ای.",
+  description: "کاربردهای تسوین برای کافه، رستوران، خرده‌فروشی و کسب‌وکارهای چندشعبه‌ای.",
   alternates: { canonical: "/solutions" },
 };
 
@@ -16,8 +16,8 @@ export default function SolutionsPage() {
   return (
     <main className="min-h-screen bg-[#f4f7fb] px-4 py-12 text-[#0b1220] sm:px-6">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black">راهکارهای تسویا</h1>
-        <p className="mt-4 max-w-2xl text-base leading-8 text-[#5f6c7e]">تسویا برای کسب‌وکارهایی طراحی شده که تعداد درخواست‌های مالی و پیگیری‌هایشان از روش‌های دستی فراتر رفته است.</p>
+        <h1 className="text-4xl font-black">راهکارهای تسوین</h1>
+        <p className="mt-4 max-w-2xl text-base leading-8 text-[#5f6c7e]">تسوین برای کسب‌وکارهایی طراحی شده که تعداد درخواست‌های مالی و پیگیری‌هایشان از روش‌های دستی فراتر رفته است.</p>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {items.map(([title, text]) => (
             <section key={title} className="rounded-[24px] border border-black/5 bg-white p-5">

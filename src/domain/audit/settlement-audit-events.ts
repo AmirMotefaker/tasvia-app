@@ -12,7 +12,7 @@ export function createSettlementAuditEvent(
         : "MANUAL_REVIEW_REQUIRED",
     actor: {
       type: "SYSTEM",
-      displayName: "Tasvia Settlement Engine",
+      displayName: "Tasvin Settlement Engine",
     },
     entityType: "SETTLEMENT",
     entityId: settlementId,

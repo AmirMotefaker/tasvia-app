@@ -13,7 +13,7 @@ export default function OnboardingPage() {
         <section className="space-y-4 rounded-[24px] border border-black/5 bg-white p-4 shadow-sm sm:p-5">
           <div className="rounded-2xl border border-[#00a99d]/30 bg-[#ecfbf8] p-4">
             <div className="text-[10px] font-extrabold text-[#008f87]">انتخاب‌شده</div>
-            <div className="mt-2 text-lg font-black">کافه نمونه تسویا</div>
+            <div className="mt-2 text-lg font-black">کافه نمونه تسوین</div>
             <div className="mt-2 text-xs text-[#657184]">شعبه مرکزی · Demo Mode</div>
           </div>
 
