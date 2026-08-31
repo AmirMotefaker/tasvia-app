@@ -2,13 +2,33 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "../../src/lib/auth";
+import { auth, authConfigured } from "../../src/lib/auth";
 import { resolveFirstActiveWorkspaceMembership } from "../../src/domain/workspace/repository";
 import { evaluateWorkspaceGate } from "../../src/auth/workspace-gate";
 
 export default async function WorkspaceLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  if (!authConfigured) {
+    return (
+      <main className="min-h-screen bg-[#f3f6fa] px-4 py-12 text-[#0b1220] sm:px-6">
+        <div className="mx-auto max-w-xl rounded-[32px] border border-black/5 bg-white p-7 shadow-sm sm:p-9">
+          <div className="text-xs font-black text-[#008f87]">پیش‌نمایش امن تسویا</div>
+          <h1 className="mt-3 text-3xl font-black">محیط کاری در این Preview به احراز هویت متصل نشده است.</h1>
+          <p className="mt-4 text-sm leading-7 text-[#657184]">
+            صفحات عمومی برای بررسی طراحی و تجربه کاربری در دسترس‌اند، اما ورود و Workspace تا زمانی که Secret و دیتابیس غیرProduction معتبر برای Preview تنظیم نشوند، عمداً غیرفعال می‌مانند.
+          </p>
+          <div className="mt-6 rounded-2xl bg-[#eafaf8] p-4 text-xs leading-6 text-[#315b59]">
+            این رفتار fail-closed است و هیچ دسترسی آزمایشی بدون پیکربندی معتبر ایجاد نمی‌کند.
+          </div>
+          <Link href="/" className="mt-6 inline-flex rounded-2xl bg-[#0f223d] px-5 py-3 text-sm font-black text-white">
+            بازگشت به سایت
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });
 
