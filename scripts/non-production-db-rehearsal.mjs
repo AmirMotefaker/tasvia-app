@@ -27,8 +27,13 @@ const prisma = process.platform === "win32" ? "npx.cmd" : "npx";
 console.log("Tasvin non-production DB rehearsal: safety gate passed.");
 console.log("1/5 prisma validate");
 execFileSync(prisma, ["prisma", "validate"], { stdio: "inherit", env });
-console.log("2/5 prisma migrate status");
-execFileSync(prisma, ["prisma", "migrate", "status"], { stdio: "inherit", env });
+console.log("2/5 prisma migrate status (pending migrations are expected before deploy)");
+try {
+  execFileSync(prisma, ["prisma", "migrate", "status"], { stdio: "inherit", env });
+} catch (error) {
+  if (error?.status !== 1) throw error;
+  console.log("Expected pre-deploy state: unapplied migrations detected.");
+}
 console.log("3/5 prisma migrate deploy");
 execFileSync(prisma, ["prisma", "migrate", "deploy"], { stdio: "inherit", env });
 console.log("4/5 prisma migrate status (post-deploy)");
