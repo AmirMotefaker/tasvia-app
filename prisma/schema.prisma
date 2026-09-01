@@ -39,6 +39,25 @@ enum TransactionStatus {
   REVERSED
 }
 
+enum AccountingAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum FiscalPeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum AccountingJournalStatus {
+  DRAFT
+  POSTED
+  REVERSED
+}
+
 model User {
   id            String       @id @default(uuid())
   name          String?
@@ -99,12 +118,15 @@ model Verification {
 }
 
 model Workspace {
-  id          String       @id @default(uuid())
-  name        String
-  slug        String       @unique
-  memberships Membership[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                 String              @id @default(uuid())
+  name               String
+  slug               String              @unique
+  memberships        Membership[]
+  accountingAccounts AccountingAccount[]
+  fiscalPeriods      FiscalPeriod[]
+  accountingJournals AccountingJournal[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model Membership {
@@ -147,4 +169,85 @@ model Transaction {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   @@index([merchantId])
+}
+
+model AccountingAccount {
+  id          String                @id @default(uuid())
+  workspaceId String
+  workspace   Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  code        String
+  name        String
+  type        AccountingAccountType
+  parentId    String?
+  parent      AccountingAccount?    @relation("AccountingAccountTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children    AccountingAccount[]   @relation("AccountingAccountTree")
+  active      Boolean               @default(true)
+  journalLines AccountingJournalLine[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@unique([workspaceId, code])
+  @@index([workspaceId, type, active])
+  @@index([parentId])
+}
+
+model FiscalPeriod {
+  id          String             @id @default(uuid())
+  workspaceId String
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  startsAt    DateTime
+  endsAt      DateTime
+  status      FiscalPeriodStatus @default(OPEN)
+  journals    AccountingJournal[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId, startsAt, endsAt])
+  @@index([workspaceId, status])
+}
+
+model AccountingJournal {
+  id               String                  @id @default(uuid())
+  workspaceId      String
+  workspace        Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  fiscalPeriodId   String?
+  fiscalPeriod     FiscalPeriod?           @relation(fields: [fiscalPeriodId], references: [id], onDelete: Restrict)
+  number           String?
+  occurredAt       DateTime
+  description      String
+  status           AccountingJournalStatus @default(DRAFT)
+  sourceDocumentId String?
+  reversalOfId     String?
+  reversalOf       AccountingJournal?      @relation("AccountingJournalReversal", fields: [reversalOfId], references: [id], onDelete: Restrict)
+  reversals        AccountingJournal[]     @relation("AccountingJournalReversal")
+  idempotencyKey   String?
+  postedAt         DateTime?
+  reversedAt       DateTime?
+  lines            AccountingJournalLine[]
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  @@unique([workspaceId, number])
+  @@unique([workspaceId, idempotencyKey])
+  @@index([workspaceId, occurredAt])
+  @@index([workspaceId, status])
+  @@index([sourceDocumentId])
+  @@index([fiscalPeriodId])
+}
+
+model AccountingJournalLine {
+  id          String            @id @default(uuid())
+  journalId   String
+  journal     AccountingJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  accountId   String
+  account     AccountingAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  debit       BigInt            @default(0)
+  credit      BigInt            @default(0)
+  description String?
+  createdAt   DateTime          @default(now())
+
+  @@index([journalId])
+  @@index([accountId])
 }
