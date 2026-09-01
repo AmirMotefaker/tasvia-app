@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { balanceSheet, profitAndLoss, trialBalance, type FinancialAccount, type PostedLedgerLine } from "../src/domain/accounting/financial-statements";
+import type { Money } from "../src/domain/financial-safety/money";
 
-const m = (minorUnits: bigint) => ({ currency: "IRR", minorUnits });
+const m = (minorUnits: bigint): Money => ({ currency: "IRR", minorUnits });
 const accounts: FinancialAccount[] = [
   { id: "cash", workspaceId: "ws", code: "101", name: "بانک", type: "ASSET" },
   { id: "equity", workspaceId: "ws", code: "301", name: "سرمایه", type: "EQUITY" },
