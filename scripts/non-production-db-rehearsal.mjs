@@ -25,12 +25,27 @@ const env = { ...process.env, DATABASE_URL: databaseUrl, DIRECT_URL: directUrl }
 const prisma = process.platform === "win32" ? "npx.cmd" : "npx";
 
 console.log("Tasvin non-production DB rehearsal: safety gate passed.");
-console.log("1/4 prisma validate");
+console.log("1/5 prisma validate");
 execFileSync(prisma, ["prisma", "validate"], { stdio: "inherit", env });
-console.log("2/4 prisma migrate status");
+console.log("2/5 prisma migrate status");
 execFileSync(prisma, ["prisma", "migrate", "status"], { stdio: "inherit", env });
-console.log("3/4 prisma migrate deploy");
+console.log("3/5 prisma migrate deploy");
 execFileSync(prisma, ["prisma", "migrate", "deploy"], { stdio: "inherit", env });
-console.log("4/4 prisma migrate status (post-deploy)");
+console.log("4/5 prisma migrate status (post-deploy)");
 execFileSync(prisma, ["prisma", "migrate", "status"], { stdio: "inherit", env });
-console.log("PASS: non-production DB migration rehearsal completed.");
+console.log("5/5 verify deployed DB matches reviewed Prisma schema");
+execFileSync(
+  prisma,
+  [
+    "prisma",
+    "migrate",
+    "diff",
+    "--from-url",
+    databaseUrl,
+    "--to-schema-datamodel",
+    "prisma/schema.prisma",
+    "--exit-code",
+  ],
+  { stdio: "inherit", env },
+);
+console.log("PASS: non-production DB migration rehearsal completed with zero schema drift.");
