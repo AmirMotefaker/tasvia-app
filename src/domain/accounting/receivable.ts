@@ -8,6 +8,7 @@ export interface Receivable {
   workspaceId: string;
   customerId: string;
   sourceId?: string;
+  sourceDocumentId?: string;
   originalAmount: Money;
   outstandingAmount: Money;
   issuedAt: Date;
