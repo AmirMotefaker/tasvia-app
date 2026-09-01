@@ -12,7 +12,7 @@ export interface CustomerStatementLine {
 }
 
 function zero(currency: Money["currency"]): Money {
-  return { currency, amount: 0n };
+  return { currency, minorUnits: 0n };
 }
 
 export function buildCustomerStatement(
@@ -32,15 +32,15 @@ export function buildCustomerStatement(
   let balance = 0n;
   return events.map((event) => {
     if (event.amount.currency !== currency) throw new Error("Customer statement currency mismatch");
-    if (event.kind === "INVOICE") balance += event.amount.amount;
-    else balance -= event.amount.amount;
+    if (event.kind === "INVOICE") balance += event.amount.minorUnits;
+    else balance -= event.amount.minorUnits;
     return {
       occurredAt: event.occurredAt,
       kind: event.kind,
       referenceId: event.referenceId,
       debit: event.kind === "INVOICE" ? event.amount : zero(currency),
       credit: event.kind === "RECEIPT" ? event.amount : zero(currency),
-      balance: { currency, amount: balance },
+      balance: { currency, minorUnits: balance },
     };
   });
 }
@@ -59,9 +59,9 @@ export function summarizeReceivablesAging(receivables: Receivable[], asOf: Date)
 
   for (const receivable of receivables) {
     if (receivable.outstandingAmount.currency !== currency) throw new Error("Aging currency mismatch");
-    if (receivable.outstandingAmount.amount === 0n) continue;
+    if (receivable.outstandingAmount.minorUnits === 0n) continue;
     const bucket = receivableAgingBucket(receivable, asOf);
-    summary[bucket] = { currency, amount: summary[bucket].amount + receivable.outstandingAmount.amount };
+    summary[bucket] = { currency, minorUnits: summary[bucket].minorUnits + receivable.outstandingAmount.minorUnits };
   }
   return summary;
 }
@@ -71,6 +71,6 @@ export function allocatedReceiptTotal(receipt: CustomerReceipt, allocations: Rec
     .filter((item) => item.receiptId === receipt.id)
     .reduce<Money>((total, item) => {
       if (item.amount.currency !== total.currency) throw new Error("Allocation currency mismatch");
-      return { currency: total.currency, amount: total.amount + item.amount.amount };
+      return { currency: total.currency, minorUnits: total.minorUnits + item.amount.minorUnits };
     }, zero(receipt.amount.currency));
 }
