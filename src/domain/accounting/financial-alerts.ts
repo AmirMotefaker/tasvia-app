@@ -23,23 +23,31 @@ function daysUntil(date: Date, asOf: Date): number {
 }
 
 export function receivableAlerts(receivables: Receivable[], asOf: Date): FinancialAlert[] {
-  return receivables.flatMap((item) => {
-    if (item.outstandingAmount.minorUnits <= 0n) return [];
+  const alerts: FinancialAlert[] = [];
+  for (const item of receivables) {
+    if (item.outstandingAmount.minorUnits <= 0n || !item.dueAt) continue;
     const days = daysUntil(item.dueAt, asOf);
-    if (days < 0) return [{ id: `ar-overdue:${item.id}`, workspaceId: item.workspaceId, kind: "RECEIVABLE_OVERDUE" as const, severity: days <= -30 ? "CRITICAL" as const : "WARNING" as const, title: "طلب سررسیدگذشته", explanationFa: `یک طلب مشتری ${Math.abs(days)} روز از سررسید گذشته است و هنوز مانده باز دارد.`, sourceType: "RECEIVABLE" as const, sourceId: item.id }];
-    if (days <= 7) return [{ id: `ar-due:${item.id}`, workspaceId: item.workspaceId, kind: "RECEIVABLE_DUE" as const, severity: "INFO" as const, title: "طلب نزدیک سررسید", explanationFa: `یک طلب مشتری تا ${days} روز دیگر سررسید می‌شود.`, sourceType: "RECEIVABLE" as const, sourceId: item.id }];
-    return [];
-  });
+    if (days < 0) {
+      alerts.push({ id: `ar-overdue:${item.id}`, workspaceId: item.workspaceId, kind: "RECEIVABLE_OVERDUE", severity: days <= -30 ? "CRITICAL" : "WARNING", title: "طلب سررسیدگذشته", explanationFa: `یک طلب مشتری ${Math.abs(days)} روز از سررسید گذشته است و هنوز مانده باز دارد.`, sourceType: "RECEIVABLE", sourceId: item.id });
+    } else if (days <= 7) {
+      alerts.push({ id: `ar-due:${item.id}`, workspaceId: item.workspaceId, kind: "RECEIVABLE_DUE", severity: "INFO", title: "طلب نزدیک سررسید", explanationFa: `یک طلب مشتری تا ${days} روز دیگر سررسید می‌شود.`, sourceType: "RECEIVABLE", sourceId: item.id });
+    }
+  }
+  return alerts;
 }
 
 export function payableAlerts(payables: Payable[], asOf: Date): FinancialAlert[] {
-  return payables.flatMap((item) => {
-    if (item.outstandingAmount.minorUnits <= 0n) return [];
+  const alerts: FinancialAlert[] = [];
+  for (const item of payables) {
+    if (item.outstandingAmount.minorUnits <= 0n || !item.dueAt) continue;
     const days = daysUntil(item.dueAt, asOf);
-    if (days < 0) return [{ id: `ap-overdue:${item.id}`, workspaceId: item.workspaceId, kind: "PAYABLE_OVERDUE" as const, severity: days <= -30 ? "CRITICAL" as const : "WARNING" as const, title: "بدهی سررسیدگذشته", explanationFa: `یک بدهی تأمین‌کننده ${Math.abs(days)} روز از سررسید گذشته است و هنوز تسویه نشده است.`, sourceType: "PAYABLE" as const, sourceId: item.id }];
-    if (days <= 7) return [{ id: `ap-due:${item.id}`, workspaceId: item.workspaceId, kind: "PAYABLE_DUE" as const, severity: "INFO" as const, title: "بدهی نزدیک سررسید", explanationFa: `یک بدهی تأمین‌کننده تا ${days} روز دیگر سررسید می‌شود.`, sourceType: "PAYABLE" as const, sourceId: item.id }];
-    return [];
-  });
+    if (days < 0) {
+      alerts.push({ id: `ap-overdue:${item.id}`, workspaceId: item.workspaceId, kind: "PAYABLE_OVERDUE", severity: days <= -30 ? "CRITICAL" : "WARNING", title: "بدهی سررسیدگذشته", explanationFa: `یک بدهی تأمین‌کننده ${Math.abs(days)} روز از سررسید گذشته است و هنوز تسویه نشده است.`, sourceType: "PAYABLE", sourceId: item.id });
+    } else if (days <= 7) {
+      alerts.push({ id: `ap-due:${item.id}`, workspaceId: item.workspaceId, kind: "PAYABLE_DUE", severity: "INFO", title: "بدهی نزدیک سررسید", explanationFa: `یک بدهی تأمین‌کننده تا ${days} روز دیگر سررسید می‌شود.`, sourceType: "PAYABLE", sourceId: item.id });
+    }
+  }
+  return alerts;
 }
 
 export function lowStockAlert(input: { item: CatalogItem; workspaceId: string; quantityMinorUnits: bigint }): FinancialAlert | null {
