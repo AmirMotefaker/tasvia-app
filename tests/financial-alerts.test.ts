@@ -4,8 +4,9 @@ import { lowStockAlert, payableAlerts, prioritizeFinancialAlerts, receivableAler
 import type { Receivable } from "../src/domain/accounting/receivable";
 import type { Payable } from "../src/domain/accounting/payable";
 import type { CatalogItem } from "../src/domain/accounting/inventory";
+import type { Money } from "../src/domain/financial-safety/money";
 
-const m = (minorUnits: bigint) => ({ currency: "IRR", minorUnits });
+const m = (minorUnits: bigint): Money => ({ currency: "IRR", minorUnits });
 const asOf = new Date("2026-09-01T00:00:00Z");
 
 const receivable: Receivable = { id: "ar1", workspaceId: "ws", customerId: "c1", issuedAt: new Date("2026-07-01"), dueAt: new Date("2026-08-01"), originalAmount: m(1000n), outstandingAmount: m(500n), status: "OVERDUE" };
