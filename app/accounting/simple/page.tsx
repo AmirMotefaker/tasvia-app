@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SIMPLE_ACCOUNTING_ACTIONS } from "../../../src/domain/accounting/simple-actions";
 
 export const metadata: Metadata = {
   title: "حسابداری ساده تسوین",
@@ -7,14 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/accounting/simple" },
 };
 
-const actions = [
-  ["فروختم", "فروش و طلب مشتری را ثبت کن", "فروش"],
-  ["خرید کردم", "خرید و بدهی تامین‌کننده را ثبت کن", "خرید"],
-  ["پول گرفتم", "دریافت از مشتری یا سایر منابع", "دریافت"],
-  ["پول دادم", "پرداخت به تامین‌کننده یا سایر اشخاص", "پرداخت"],
-  ["هزینه کردم", "هزینه روزانه را با مدرک ثبت کن", "هزینه"],
-  ["طلب و بدهی", "مانده اشخاص و سررسیدها را ببین", "مانده"],
-];
+const actions = Object.values(SIMPLE_ACCOUNTING_ACTIONS);
 
 export default function SimpleAccountingPage() {
   return (
@@ -30,15 +24,15 @@ export default function SimpleAccountingPage() {
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {actions.map(([title, description, label]) => (
-            <article key={title} className="group rounded-[28px] border border-black/5 bg-white p-6 shadow-[0_14px_45px_rgba(15,34,61,.05)]">
+          {actions.map((action) => (
+            <article key={action.slug} className="group rounded-[28px] border border-black/5 bg-white p-6 shadow-[0_14px_45px_rgba(15,34,61,.05)]">
               <div className="flex items-center justify-between">
-                <span className="rounded-full bg-[#eafaf8] px-3 py-1.5 text-xs font-black text-[#007d75]">{label}</span>
+                <span className="rounded-full bg-[#eafaf8] px-3 py-1.5 text-xs font-black text-[#007d75]">ثبت ساده</span>
                 <span aria-hidden className="text-xl text-[#8a96a8]">←</span>
               </div>
-              <h2 className="mt-7 text-xl font-black">{title}</h2>
-              <p className="mt-2 text-sm leading-7 text-[#657184]">{description}</p>
-              <button type="button" className="mt-6 min-h-11 w-full rounded-2xl bg-[#0f223d] px-4 py-3 text-sm font-black text-white">شروع ثبت</button>
+              <h2 className="mt-7 text-xl font-black">{action.label}</h2>
+              <p className="mt-2 text-sm leading-7 text-[#657184]">{action.description}</p>
+              <Link href={`/accounting/simple/${action.slug}`} className="mt-6 flex min-h-11 w-full items-center justify-center rounded-2xl bg-[#0f223d] px-4 py-3 text-sm font-black text-white">شروع</Link>
             </article>
           ))}
         </div>
