@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate",
+    "db:rehearsal": "node scripts/non-production-db-rehearsal.mjs",
     "security:secrets": "node scripts/secret-scan.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
