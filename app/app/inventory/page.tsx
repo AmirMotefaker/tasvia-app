@@ -1,42 +1,22 @@
 import Link from "next/link";
+import { WorkspaceShell } from "../../../src/components/workspace/shell";
 
-const capabilities = [
-  ["کالا و خدمات", "کد، واحد، بارکد، مالیات و حداقل موجودی"],
-  ["انبارها", "انبار مرکزی، شعب و کنترل فضای کاری"],
-  ["کارت انبار", "ورود، خروج و مانده زمانی هر کالا"],
-  ["انتقال انبار", "انتقال دوطرفه و قابل حسابرسی بین انبارها"],
-  ["ارزش موجودی", "میانگین موزون و ارزش ریالی موجودی"],
-  ["بهای تمام‌شده", "اتصال فروش کالای انباری به سند COGS"],
+const rows = [
+  ["K-1001", "کالای نمونه", "انبار مرکزی", "در انتظار داده", "—", "—"],
+  ["K-1002", "خدمت نمونه", "بدون انبار", "در انتظار داده", "—", "—"],
 ];
 
 export default function InventoryPage() {
   return (
-    <main className="min-h-screen bg-[#f4f7fb] text-[#0b1220]" dir="rtl">
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <div className="flex flex-col gap-4 border-b border-black/5 pb-7 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="text-xs font-black text-[#008f87]">عملیات کالا</div>
-            <h1 className="mt-2 text-3xl font-black">کالا و انبار</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-[#657184]">موجودی، گردش و بهای تمام‌شده از رویدادهای واقعی انبار ساخته می‌شوند؛ بدون عدد نمایشی.</p>
-          </div>
-          <Link href="/app" className="text-sm font-black text-[#007d75]">بازگشت به میزکار</Link>
-        </div>
-
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {capabilities.map(([title, description]) => (
-            <article key={title} className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_14px_45px_rgba(15,34,61,.05)]">
-              <h2 className="text-lg font-black">{title}</h2>
-              <p className="mt-2 text-sm leading-7 text-[#657184]">{description}</p>
-            </article>
-          ))}
-        </div>
-
-        <section className="mt-7 rounded-[28px] bg-[#0f223d] p-6 text-white sm:p-8">
-          <div className="text-xs font-black text-[#63dfd4]">کنترل موجودی</div>
-          <h2 className="mt-3 text-2xl font-black">خروج کالا بدون موجودی کافی متوقف می‌شود.</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-white/65">خرید ورود موجودی، فروش خروج موجودی، انتقال یک خروج و یک ورود متناظر و فروش کالا سند بهای تمام‌شده ایجاد می‌کند. داده واقعی پس از اتصال Persistence از دفتر موجودی فضای کاری خوانده می‌شود.</p>
-        </section>
+    <WorkspaceShell title="کالا و انبار" eyebrow="کنترل موجودی" actions={<Link href="/app/inventory" className="rounded-xl bg-[#102845] px-4 py-2.5 text-xs font-black text-white">+ کالای جدید</Link>}>
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[['ارزش موجودی','از دفتر انبار'],['کالاهای کم‌موجودی','پس از اتصال داده'],['ورودی این دوره','از رویداد واقعی'],['خروجی این دوره','از فروش و انتقال']].map(([a,b])=><article key={a} className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">{a}</div><div className="mt-3 text-xl font-black">{b}</div></article>)}
       </section>
-    </main>
+      <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><div className="text-xs font-black text-[#0b8d85]">فهرست کالاها</div><h2 className="mt-1 text-xl font-black">موجودی و بهای تمام‌شده</h2></div><div className="flex gap-2"><button className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold">فیلتر</button><button className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold">خروجی</button></div></div>
+        <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[760px] text-right text-sm"><thead className="bg-slate-50 text-xs text-slate-500"><tr>{['کد','نام','انبار','موجودی','میانگین بها','ارزش'].map(h=><th key={h} className="px-4 py-3 font-black">{h}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r[0]} className="border-t border-slate-100">{r.map((c,i)=><td key={i} className="px-4 py-4 font-medium text-slate-700">{c}</td>)}</tr>)}</tbody></table></div>
+      </section>
+      <section className="mt-5 grid gap-4 lg:grid-cols-3"><article className="rounded-2xl bg-[#102845] p-5 text-white"><div className="text-xs font-black text-[#63dfd4]">کنترل منفی</div><h3 className="mt-2 font-black">خروج بدون موجودی کافی متوقف می‌شود</h3></article><article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">انتقال</div><h3 className="mt-2 font-black">دو رویداد متناظر و قابل Audit</h3></article><article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">COGS</div><h3 className="mt-2 font-black">فروش کالا به بهای تمام‌شده متصل است</h3></article></section>
+    </WorkspaceShell>
   );
 }

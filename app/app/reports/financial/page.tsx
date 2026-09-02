@@ -1,50 +1,26 @@
 import Link from "next/link";
+import { WorkspaceShell } from "../../../../src/components/workspace/shell";
 
 const reports = [
-  ["تراز آزمایشی", "مانده بدهکار و بستانکار همه حساب‌ها و کنترل توازن دفتر"],
-  ["سود و زیان", "درآمد، هزینه و سود خالص دوره با امکان رفتن تا حساب و سند"],
-  ["ترازنامه", "دارایی، بدهی، حقوق مالکانه و سود جاری در یک نمای قابل فهم"],
-  ["جریان نقد", "ورودی و خروجی نقد عملیاتی، سرمایه‌گذاری و تأمین مالی"],
-  ["مطالبات", "مانده مشتریان، Aging و سررسیدهای دریافت"],
-  ["بدهی‌ها", "مانده تأمین‌کنندگان، Aging و سررسیدهای پرداخت"],
+  ["سود و زیان", "درآمد، هزینه و سود خالص دوره"],
+  ["ترازنامه", "دارایی، بدهی و حقوق مالکانه"],
+  ["جریان نقد", "ورودی و خروجی نقد"],
+  ["تراز آزمایشی", "کنترل مانده حساب‌ها و توازن دفتر"],
+  ["مطالبات", "Aging مشتریان و سررسید دریافت"],
+  ["بدهی‌ها", "Aging تأمین‌کنندگان و سررسید پرداخت"],
 ];
 
 export default function FinancialReportsPage() {
   return (
-    <main className="min-h-screen bg-[#f4f7fb] text-[#0b1220]" dir="rtl">
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <header className="flex flex-col gap-5 border-b border-black/5 pb-7 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="text-xs font-black text-[#008f87]">گزارش‌های مالی</div>
-            <h1 className="mt-2 text-3xl font-black sm:text-4xl">از خلاصه مدیریتی تا سند منبع</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-7 text-[#657184]">عددها از دفتر حسابداری فضای کاری می‌آیند؛ هر گزارش باید تا حساب، سند و مدرک منبع قابل پیگیری باشد.</p>
-          </div>
-          <Link href="/app" className="text-sm font-black text-[#007d75]">بازگشت به میزکار</Link>
-        </header>
-
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {reports.map(([title, description]) => (
-            <article key={title} className="rounded-[26px] border border-black/5 bg-white p-5 shadow-[0_14px_45px_rgba(15,34,61,.05)]">
-              <h2 className="text-lg font-black">{title}</h2>
-              <p className="mt-2 text-sm leading-7 text-[#657184]">{description}</p>
-              <div className="mt-5 text-xs font-black text-[#008f87]">مشاهده گزارش ←</div>
-            </article>
-          ))}
-        </div>
-
-        <section className="mt-7 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-[28px] bg-[#0f223d] p-6 text-white sm:p-8">
-            <div className="text-xs font-black text-[#63dfd4]">برای صاحب کسب‌وکار</div>
-            <h2 className="mt-3 text-2xl font-black">بفهم چه اتفاقی افتاده، نه فقط اینکه عدد چیست.</h2>
-            <p className="mt-3 text-sm leading-7 text-white/65">سود، نقدینگی، طلب و بدهی باید با توضیح ساده و هشدارهای قابل اقدام نمایش داده شوند.</p>
-          </div>
-          <div className="rounded-[28px] border border-black/5 bg-white p-6 sm:p-8">
-            <div className="text-xs font-black text-[#008f87]">برای حسابدار</div>
-            <h2 className="mt-3 text-2xl font-black">Drill-down کامل و قابل حسابرسی</h2>
-            <p className="mt-3 text-sm leading-7 text-[#657184]">از صورت مالی به حساب، از حساب به گردش، از گردش به Journal و از Journal به سند منبع.</p>
-          </div>
-        </section>
+    <WorkspaceShell title="گزارش‌های مالی" eyebrow="تحلیل و Drill-down" actions={<Link href="/accounting/professional" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black">دفتر حرفه‌ای</Link>}>
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[['فروش دوره','از دفتر واقعی'],['سود خالص','در انتظار محاسبه'],['مانده نقد','از خزانه'],['سرمایه در گردش','در انتظار داده']].map(([a,b])=><article key={a} className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">{a}</div><div className="mt-3 text-xl font-black">{b}</div></article>)}
       </section>
-    </main>
+      <section className="mt-5 grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
+        <article className="rounded-3xl border border-slate-200 bg-white p-5"><div className="flex items-center justify-between"><div><div className="text-xs font-black text-[#0b8d85]">روند عملکرد</div><h2 className="mt-1 text-xl font-black">مقایسه دوره‌ای</h2></div><button className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold">انتخاب دوره</button></div><div className="mt-6 flex h-56 items-end gap-3 rounded-2xl bg-slate-50 p-5">{[38,62,48,76,58,84,71,91].map((h,i)=><div key={i} className="flex-1 rounded-t-lg bg-[#63dfd4]" style={{height:`${h}%`}} />)}</div></article>
+        <article className="rounded-3xl bg-[#102845] p-5 text-white"><div className="text-xs font-black text-[#63dfd4]">دید مدیریتی</div><h2 className="mt-2 text-xl font-black">عدد بدون توضیح کافی نیست</h2><p className="mt-3 text-sm leading-7 text-white/65">هر KPI باید به حساب، سند و مدرک منبع قابل پیگیری باشد و هوش مالی فقط توضیح قابل استناد ارائه کند.</p><div className="mt-6 grid grid-cols-2 gap-3">{['سود','نقدینگی','طلب','بدهی'].map(x=><div key={x} className="rounded-2xl bg-white/8 p-4 text-sm font-black">{x}<div className="mt-2 text-xs font-medium text-white/45">در انتظار داده</div></div>)}</div></article>
+      </section>
+      <section className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{reports.map(([title,desc])=><article key={title} className="rounded-2xl border border-slate-200 bg-white p-5"><h3 className="font-black">{title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{desc}</p><div className="mt-4 text-xs font-black text-[#0b8d85]">باز کردن گزارش ←</div></article>)}</section>
+    </WorkspaceShell>
   );
 }
