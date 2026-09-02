@@ -1,8 +1,9 @@
 -- Tasvin reviewed migration artifact
 -- Scope: Better Auth identity, workspace membership, counterparties/open balances,
 -- accounting accounts, fiscal periods, journals and journal lines.
--- IMPORTANT: this file is committed for review/rehearsal only. Do not apply to Production
--- until the non-production rehearsal, legacy-data inventory, backup and explicit Production gate pass.
+-- IMPORTANT: this migration is intentionally additive for legacy credentials.
+-- Legacy User.password is preserved until a separately reviewed credential-transition
+-- and cleanup migration has passed inventory, rehearsal, backup and Production gates.
 
 -- CreateEnum
 CREATE TYPE "WorkspaceRole" AS ENUM ('OWNER', 'ADMIN', 'FINANCE', 'VIEWER');
@@ -29,15 +30,13 @@ CREATE TYPE "OpenBalanceType" AS ENUM ('RECEIVABLE', 'PAYABLE');
 CREATE TYPE "OpenBalanceStatus" AS ENUM ('OPEN', 'PARTIALLY_PAID', 'PAID', 'VOID');
 
 -- Better Auth-compatible User evolution.
--- NOTE: legacy User.password is intentionally removed to match the reviewed Prisma schema.
--- Inventory/backup legacy rows before any Production application.
+-- NOTE: legacy User.password is intentionally preserved in this additive phase.
 ALTER TABLE "User"
   ADD COLUMN "name" TEXT,
   ADD COLUMN "email" TEXT,
   ADD COLUMN "emailVerified" BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN "image" TEXT,
-  ALTER COLUMN "phone" DROP NOT NULL,
-  DROP COLUMN "password";
+  ALTER COLUMN "phone" DROP NOT NULL;
 
 -- CreateTable
 CREATE TABLE "Session" (
