@@ -104,3 +104,30 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Start production build for launch rehearsal
+        shell: bash
+        run: |
+          npm start > /tmp/tasvin-next.log 2>&1 &
+          echo $! > /tmp/tasvin-next.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent --output /dev/null http://127.0.0.1:3000/; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/tasvin-next.log
+          exit 1
+
+      - name: Smoke-test core product routes
+        env:
+          TASVIN_REHEARSAL_BASE_URL: http://127.0.0.1:3000
+        run: npm run rehearsal:routes
+
+      - name: Stop rehearsal server
+        if: always()
+        shell: bash
+        run: |
+          if [ -f /tmp/tasvin-next.pid ]; then
+            kill "$(cat /tmp/tasvin-next.pid)" || true
+          fi
