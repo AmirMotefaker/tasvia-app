@@ -13,6 +13,20 @@ jobs:
   security-quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: CI_ONLY_PLACEHOLDER
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/ci
       DIRECT_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/ci
@@ -36,6 +50,26 @@ jobs:
 
       - name: Validate Prisma schema
         run: npm run prisma:validate
+
+      - name: Rehearse migrations on ephemeral PostgreSQL and verify zero drift
+        run: npm run db:rehearsal
+
+      - name: Verify recovery grant atomic consumption on PostgreSQL
+        run: npm run db:rehearsal:recovery-concurrency
+
+      - name: Verify recovery challenge atomic verification on PostgreSQL
+        run: npm run db:rehearsal:recovery-challenge-concurrency
+
+      - name: Verify challenge-to-grant transaction on PostgreSQL
+        run: npm run db:rehearsal:recovery-transaction
+
+      - name: Create isolated populated legacy rehearsal database
+        run: docker exec ${{ job.services.postgres.id }} createdb -U ci legacy_ci
+
+      - name: Rehearse migration against populated legacy database
+        env:
+          LEGACY_REHEARSAL_DATABASE_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/legacy_ci
+        run: npm run db:rehearsal:legacy
 
       - name: Lint
         run: npm run lint

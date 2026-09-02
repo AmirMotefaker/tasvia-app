@@ -39,20 +39,65 @@ enum TransactionStatus {
   REVERSED
 }
 
+enum AccountingAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum FiscalPeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum AccountingJournalStatus {
+  DRAFT
+  POSTED
+  REVERSED
+}
+
+enum CounterpartyType {
+  CUSTOMER
+  SUPPLIER
+  BOTH
+}
+
+enum OpenBalanceType {
+  RECEIVABLE
+  PAYABLE
+}
+
+enum OpenBalanceStatus {
+  OPEN
+  PARTIALLY_PAID
+  PAID
+  VOID
+}
+
+enum RecoveryChannel {
+  PHONE
+  EMAIL
+}
+
 model User {
-  id            String       @id @default(uuid())
-  name          String?
-  email         String?      @unique
-  emailVerified Boolean      @default(false)
-  image         String?
-  phone         String?      @unique
-  role          Role         @default(MERCHANT)
-  merchant      Merchant?
-  sessions      Session[]
-  accounts      Account[]
-  memberships   Membership[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id                 String                    @id @default(uuid())
+  name               String?
+  email              String?                   @unique
+  emailVerified      Boolean                   @default(false)
+  image              String?
+  phone              String?                   @unique
+  legacyPassword     String?                   @map("password")
+  role               Role                      @default(MERCHANT)
+  merchant           Merchant?
+  sessions           Session[]
+  accounts           Account[]
+  memberships        Membership[]
+  recoveryChallenges LegacyRecoveryChallenge[]
+  recoveryGrants     LegacyRecoveryGrant[]
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
 }
 
 model Session {
@@ -65,6 +110,7 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@index([userId])
 }
 
@@ -84,6 +130,7 @@ model Account {
   password              String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+
   @@index([userId])
   @@unique([issuer, accountId])
 }
@@ -95,16 +142,47 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
   @@index([identifier])
 }
 
+model LegacyRecoveryChallenge {
+  id              String          @id
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel         RecoveryChannel
+  destinationHint String
+  expiresAt       DateTime
+  verifiedAt      DateTime?
+  createdAt       DateTime        @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model LegacyRecoveryGrant {
+  id         String    @id
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuedAt   DateTime
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, expiresAt, consumedAt])
+}
+
 model Workspace {
-  id          String       @id @default(uuid())
-  name        String
-  slug        String       @unique
-  memberships Membership[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                 String              @id @default(uuid())
+  name               String
+  slug               String              @unique
+  memberships        Membership[]
+  accountingAccounts AccountingAccount[]
+  fiscalPeriods      FiscalPeriod[]
+  accountingJournals AccountingJournal[]
+  counterparties     Counterparty[]
+  openBalances       OpenBalance[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model Membership {
@@ -117,6 +195,7 @@ model Membership {
   workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+
   @@unique([userId, workspaceId])
   @@index([workspaceId, status])
   @@index([userId, status])
@@ -146,5 +225,128 @@ model Transaction {
   targetIban   String?
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
+
   @@index([merchantId])
+}
+
+model Counterparty {
+  id            String           @id @default(uuid())
+  workspaceId   String
+  workspace     Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  type          CounterpartyType
+  name          String
+  nationalId    String?
+  economicCode  String?
+  phone         String?
+  email         String?
+  active        Boolean          @default(true)
+  openBalances  OpenBalance[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([workspaceId, type, active])
+  @@index([workspaceId, name])
+}
+
+model OpenBalance {
+  id                String            @id @default(uuid())
+  workspaceId       String
+  workspace         Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  counterpartyId    String
+  counterparty      Counterparty      @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  type              OpenBalanceType
+  sourceDocumentId  String
+  issuedAt          DateTime
+  dueAt             DateTime
+  originalAmount    BigInt
+  outstandingAmount BigInt
+  currency          String            @default("IRR")
+  status            OpenBalanceStatus @default(OPEN)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@unique([workspaceId, type, sourceDocumentId])
+  @@index([workspaceId, type, status, dueAt])
+  @@index([counterpartyId, status])
+}
+
+model AccountingAccount {
+  id           String                  @id @default(uuid())
+  workspaceId  String
+  workspace    Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  code         String
+  name         String
+  type         AccountingAccountType
+  parentId     String?
+  parent       AccountingAccount?      @relation("AccountingAccountTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children     AccountingAccount[]     @relation("AccountingAccountTree")
+  active       Boolean                 @default(true)
+  journalLines AccountingJournalLine[]
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@unique([workspaceId, code])
+  @@index([workspaceId, type, active])
+  @@index([parentId])
+}
+
+model FiscalPeriod {
+  id          String             @id @default(uuid())
+  workspaceId String
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  startsAt    DateTime
+  endsAt      DateTime
+  status      FiscalPeriodStatus @default(OPEN)
+  journals    AccountingJournal[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@unique([workspaceId, name])
+  @@index([workspaceId, startsAt, endsAt])
+  @@index([workspaceId, status])
+}
+
+model AccountingJournal {
+  id               String                  @id @default(uuid())
+  workspaceId      String
+  workspace        Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  fiscalPeriodId   String?
+  fiscalPeriod     FiscalPeriod?           @relation(fields: [fiscalPeriodId], references: [id], onDelete: Restrict)
+  number           String?
+  occurredAt       DateTime
+  description      String
+  status           AccountingJournalStatus @default(DRAFT)
+  sourceDocumentId String?
+  reversalOfId     String?
+  reversalOf       AccountingJournal?      @relation("AccountingJournalReversal", fields: [reversalOfId], references: [id], onDelete: Restrict)
+  reversals        AccountingJournal[]     @relation("AccountingJournalReversal")
+  idempotencyKey   String?
+  postedAt         DateTime?
+  reversedAt       DateTime?
+  lines            AccountingJournalLine[]
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  @@unique([workspaceId, number])
+  @@unique([workspaceId, idempotencyKey])
+  @@index([workspaceId, occurredAt])
+  @@index([workspaceId, status])
+  @@index([sourceDocumentId])
+  @@index([fiscalPeriodId])
+}
+
+model AccountingJournalLine {
+  id          String            @id @default(uuid())
+  journalId   String
+  journal     AccountingJournal @relation(fields: [journalId], references: [id], onDelete: Cascade)
+  accountId   String
+  account     AccountingAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  debit       BigInt            @default(0)
+  credit      BigInt            @default(0)
+  description String?
+  createdAt   DateTime          @default(now())
+
+  @@index([journalId])
+  @@index([accountId])
 }

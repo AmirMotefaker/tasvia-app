@@ -9,6 +9,11 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate",
+    "db:rehearsal": "node scripts/non-production-db-rehearsal.mjs",
+    "db:rehearsal:legacy": "node scripts/populated-legacy-db-rehearsal.mjs",
+    "db:rehearsal:recovery-concurrency": "node scripts/recovery-grant-concurrency-rehearsal.mjs",
+    "db:rehearsal:recovery-challenge-concurrency": "node scripts/recovery-challenge-concurrency-rehearsal.mjs",
+    "db:rehearsal:recovery-transaction": "node scripts/recovery-verification-transaction-rehearsal.mjs",
     "security:secrets": "node scripts/secret-scan.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
