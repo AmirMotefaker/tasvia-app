@@ -54,6 +54,9 @@ jobs:
       - name: Rehearse migrations on ephemeral PostgreSQL and verify zero drift
         run: npm run db:rehearsal
 
+      - name: Verify recovery grant atomic consumption on PostgreSQL
+        run: npm run db:rehearsal:recovery-concurrency
+
       - name: Create isolated populated legacy rehearsal database
         run: docker exec ${{ job.services.postgres.id }} createdb -U ci legacy_ci
 
