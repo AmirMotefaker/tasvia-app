@@ -54,6 +54,14 @@ jobs:
       - name: Rehearse migrations on ephemeral PostgreSQL and verify zero drift
         run: npm run db:rehearsal
 
+      - name: Create isolated populated legacy rehearsal database
+        run: docker exec ${{ job.services.postgres.id }} createdb -U ci legacy_ci
+
+      - name: Rehearse migration against populated legacy database
+        env:
+          LEGACY_REHEARSAL_DATABASE_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/legacy_ci
+        run: npm run db:rehearsal:legacy
+
       - name: Lint
         run: npm run lint
 
