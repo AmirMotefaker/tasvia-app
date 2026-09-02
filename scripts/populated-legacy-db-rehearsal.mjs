@@ -60,29 +60,21 @@ try {
     throw new Error(`Unexpected legacy seed inventory: ${JSON.stringify(snapshot)}`);
   }
 
-  console.log("4/7 deploy reviewed migration onto populated legacy database");
+  console.log("4/7 deploy additive reviewed migration onto populated legacy database");
   execFileSync(prismaCli, ["prisma", "migrate", "deploy"], { stdio: "inherit", env });
 
-  console.log("5/7 verify relational data survived");
+  console.log("5/7 verify relational data and legacy credential survived");
   const after = await prisma.$queryRawUnsafe(`
     SELECT
       (SELECT COUNT(*)::int FROM "User" WHERE "id" = 'legacy-user-1') AS user_count,
-      (SELECT COUNT(*)::int FROM "Merchant" WHERE "id" = 'legacy-merchant-1' AND "userId" = 'legacy-user-1') AS merchant_count
+      (SELECT COUNT(*)::int FROM "Merchant" WHERE "id" = 'legacy-merchant-1' AND "userId" = 'legacy-user-1') AS merchant_count,
+      (SELECT COUNT(*)::int FROM "User" WHERE "id" = 'legacy-user-1' AND "password" = '$synthetic$legacy$hash') AS legacy_password_count
   `);
-  if (after[0].user_count !== 1 || after[0].merchant_count !== 1) {
-    throw new Error(`Legacy relational data was not preserved: ${JSON.stringify(after[0])}`);
+  if (after[0].user_count !== 1 || after[0].merchant_count !== 1 || after[0].legacy_password_count !== 1) {
+    throw new Error(`Legacy data or credential was not preserved: ${JSON.stringify(after[0])}`);
   }
 
-  console.log("6/7 verify legacy password column was destructively removed");
-  const passwordColumn = await prisma.$queryRawUnsafe(`
-    SELECT COUNT(*)::int AS count
-    FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = 'User' AND column_name = 'password'
-  `);
-  if (passwordColumn[0].count !== 0) {
-    throw new Error("Expected legacy User.password column to be removed by reviewed migration");
-  }
-
+  console.log("6/7 verify no automatic Better Auth credential copy occurred");
   const credentialRows = await prisma.$queryRawUnsafe(`
     SELECT COUNT(*)::int AS count FROM "Account" WHERE "userId" = 'legacy-user-1' AND "password" IS NOT NULL
   `);
@@ -97,7 +89,7 @@ try {
     { stdio: "inherit", env },
   );
 
-  console.log("PASS: populated legacy rehearsal confirms data preservation but credential loss without explicit transfer.");
+  console.log("PASS: populated legacy rehearsal preserves identity, relationships and legacy credential without unsafe credential copying.");
 } finally {
   await prisma.$disconnect();
 }
