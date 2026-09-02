@@ -71,6 +71,28 @@ jobs:
           LEGACY_REHEARSAL_DATABASE_URL: postgresql://ci:CI_ONLY_PLACEHOLDER@127.0.0.1:5432/legacy_ci
         run: npm run db:rehearsal:legacy
 
+      - name: Verify production readiness defaults fail closed
+        shell: bash
+        run: |
+          set +e
+          output="$(npm run production:readiness 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -eq 2
+          printf '%s' "$output" | grep '"status": "BLOCKED"'
+          printf '%s' "$output" | grep 'backup-not-verified'
+          printf '%s' "$output" | grep 'legacy-inventory-incomplete'
+
+      - name: Verify readiness logic with synthetic non-production evidence
+        env:
+          TASVIN_BACKUP_VERIFIED: "true"
+          TASVIN_RESTORE_REHEARSED: "true"
+          TASVIN_MIGRATION_REHEARSAL_PASSED: "true"
+          TASVIN_ROLLBACK_PLAN_VERIFIED: "true"
+          TASVIN_LEGACY_INVENTORY_COMPLETE: "true"
+        run: npm run production:readiness
+
       - name: Lint
         run: npm run lint
 
