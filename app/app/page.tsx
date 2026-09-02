@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { WorkspaceNav } from "../../src/components/workspace/nav";
+import { WorkspaceShell } from "../../src/components/workspace/shell";
 
 export const metadata: Metadata = {
   title: "داشبورد مالی تسوین",
@@ -9,74 +9,110 @@ export const metadata: Metadata = {
 };
 
 const metrics = [
-  ["فروش", "از دفتر واقعی", "فاکتورهای صادرشده و درآمد"],
-  ["نقدینگی", "از خزانه", "بانک، صندوق و تنخواه"],
-  ["مطالبات", "از مشتریان", "مانده و سررسید طلب‌ها"],
-  ["بدهی‌ها", "از تأمین‌کنندگان", "مانده و سررسید پرداخت‌ها"],
-];
-
-const modules = [
-  ["فروش و فاکتور", "/app/sales", "فاکتور، دریافت، طلب و برگشت از فروش"],
-  ["خرید و تأمین‌کننده", "/app/purchases", "خرید، بدهی، پرداخت و مالیات خرید"],
-  ["خزانه", "/app/treasury", "بانک، صندوق، چک، انتقال و مغایرت‌گیری"],
-  ["کالا و انبار", "/app/inventory", "موجودی، کارت انبار و بهای تمام‌شده"],
-  ["کنترل‌های تجاری", "/app/commercial-controls", "چندارزی، اقساط، سطوح قیمت، تخفیف، پورسانت و بارکد"],
-  ["کنترل‌های عملیاتی", "/app/operations-controls", "آرشیو، اعلان، فرم‌ساز، بستن سال، تجمیع، تولید و فروشگاه آنلاین"],
-  ["انطباق و اتصال", "/app/platform-controls", "سامانه مودیان، استعلام، POS، Approval، Backup و زبان"],
-  ["گزارش‌های مالی", "/app/reports/financial", "سود و زیان، ترازنامه و جریان نقد"],
-  ["حسابداری حرفه‌ای", "/accounting/professional", "اسناد، دفاتر، تراز و Drill-down"],
+  ["فروش دوره", "در انتظار داده", "از فاکتورهای قطعی"],
+  ["دریافتنی", "در انتظار داده", "مطالبات باز مشتریان"],
+  ["پرداختنی", "در انتظار داده", "بدهی باز تأمین‌کنندگان"],
+  ["موجودی نقد", "در انتظار داده", "بانک، صندوق و تنخواه"],
 ];
 
 const quickActions = [
-  ["فروختم", "/accounting/simple/sale"],
-  ["خرید کردم", "/accounting/simple/purchase"],
-  ["پول گرفتم", "/accounting/simple/receipt"],
-  ["پول دادم", "/accounting/simple/payment"],
-  ["هزینه کردم", "/accounting/simple/expense"],
-  ["طلب و بدهی", "/accounting/simple/balances"],
+  ["فاکتور فروش", "/app/sales"],
+  ["ثبت خرید", "/app/purchases"],
+  ["دریافت وجه", "/accounting/simple/receipt"],
+  ["پرداخت وجه", "/accounting/simple/payment"],
 ];
 
 export default function WorkspacePage() {
   return (
-    <main className="min-h-screen bg-[#f3f6fa] text-[#0b1220]" dir="rtl">
-      <header className="border-b border-black/5 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
-            <div><div className="text-lg font-black">تسوین</div><div className="text-[11px] text-[#6f7a8b]">مرکز فرمان مالی کسب‌وکار</div></div>
-            <Link href="/sign-in" className="rounded-xl border border-black/10 px-3 py-2 text-xs font-black">حساب کاربری</Link>
-          </div>
-          <div className="mt-4"><WorkspaceNav /></div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
-        <section className="grid gap-4 lg:grid-cols-[1.45fr_.55fr]">
-          <div className="rounded-[30px] bg-[#0f223d] p-6 text-white sm:p-8">
-            <div className="text-xs font-black text-[#63dfd4]">وضع مالی کسب‌وکار</div>
-            <h1 className="mt-3 max-w-3xl text-3xl font-black sm:text-4xl">همه چیز مالی، در یک نگاه قابل فهم.</h1>
-            <p className="mt-4 max-w-3xl text-sm leading-8 text-white/65">فروش، سود، نقدینگی، طلب، بدهی و موجودی باید مستقیماً از دفتر واقعی فضای کاری محاسبه شوند. تسوین در این صفحه عدد ساختگی یا داده نمایشی را به‌جای اطلاعات مالی شما نشان نمی‌دهد.</p>
-          </div>
-          <Link href="/accounting/simple" className="flex min-h-44 flex-col justify-between rounded-[30px] bg-[#62ddd2] p-6 text-[#0f223d]"><span className="text-xs font-black">ثبت سریع</span><span className="text-xl font-black">چه اتفاقی افتاد؟ ←</span></Link>
-        </section>
-
-        <section className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {metrics.map(([title, source, description]) => <article key={title} className="rounded-3xl border border-black/5 bg-white p-5"><div className="text-xs font-bold text-[#687487]">{title}</div><div className="mt-2 text-lg font-black text-[#0f223d]">{source}</div><div className="mt-2 text-[11px] font-bold leading-5 text-[#008f87]">{description}</div></article>)}
-        </section>
-
-        <section className="mt-5 grid gap-5 lg:grid-cols-[1.25fr_.75fr]">
-          <article className="rounded-[30px] bg-white p-5 sm:p-6">
-            <div className="flex items-center justify-between gap-4"><div><div className="text-xs font-black text-[#008f87]">ماژول‌های اصلی</div><h2 className="mt-2 text-xl font-black">مرکز عملیات مالی</h2></div><Link href="/accounting" className="text-xs font-black text-[#008f87]">حسابداری تسوین</Link></div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">{modules.map(([title, href, description]) => <Link key={href} href={href} className="rounded-2xl border border-black/5 bg-[#f7f9fc] p-4 transition hover:bg-[#f0f5f8]"><div className="text-sm font-black">{title}</div><div className="mt-2 text-xs leading-6 text-[#697587]">{description}</div></Link>)}</div>
+    <WorkspaceShell
+      eyebrow="مرکز فرمان مالی"
+      title="داشبورد"
+      actions={<Link href="/accounting/simple" className="rounded-xl bg-[#102845] px-4 py-2.5 text-xs font-black text-white">ثبت سریع +</Link>}
+    >
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map(([title, value, note]) => (
+          <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-black text-[#64748b]">{title}</span>
+              <span className="h-2.5 w-2.5 rounded-full bg-[#63dfd4]" />
+            </div>
+            <div className="mt-4 text-xl font-black text-[#102845]">{value}</div>
+            <div className="mt-2 text-[11px] font-bold text-[#8290a4]">{note}</div>
           </article>
-          <article className="rounded-[30px] bg-white p-5 sm:p-6"><div className="text-xs font-black text-[#008f87]">برای همه، حتی بدون دانش حسابداری</div><h2 className="mt-2 text-xl font-black">کار روزانه را با زبان خودت ثبت کن</h2><div className="mt-5 grid grid-cols-2 gap-3">{quickActions.map(([label, href]) => <Link key={href} href={href} className="flex min-h-20 items-center justify-center rounded-2xl bg-[#f5f8fb] p-4 text-center text-sm font-black hover:bg-[#eaf6f4]">{label}</Link>)}</div></article>
-        </section>
+        ))}
+      </section>
 
-        <section className="mt-5 grid gap-4 lg:grid-cols-3">
-          <article className="rounded-3xl border border-black/5 bg-white p-5"><div className="text-xs font-black text-[#008f87]">هشدارهای مالی</div><h2 className="mt-2 text-lg font-black">فقط هشدارهای قابل توضیح</h2><p className="mt-3 text-sm leading-7 text-[#687487]">سررسید طلب و بدهی، کمبود موجودی، مغایرت خزانه و ناهنجاری مالی باید با دلیل و منبع نمایش داده شوند.</p></article>
-          <article className="rounded-3xl border border-black/5 bg-white p-5"><div className="text-xs font-black text-[#008f87]">هوش مالی</div><h2 className="mt-2 text-lg font-black">توضیح ساده، نه تصمیم مالی خودکار</h2><p className="mt-3 text-sm leading-7 text-[#687487]">تسوین می‌تواند وضعیت مالی را به زبان ساده توضیح دهد، اما هیچ اقدام مالی برگشت‌ناپذیری را بدون تأیید کاربر انجام نمی‌دهد.</p></article>
-          <article className="rounded-3xl border border-black/5 bg-white p-5"><div className="text-xs font-black text-[#008f87]">ردیابی کامل</div><h2 className="mt-2 text-lg font-black">از عدد تا سند منبع</h2><p className="mt-3 text-sm leading-7 text-[#687487]">هر عدد گزارش باید به حساب، سند حسابداری و در نهایت فاکتور، پرداخت یا مدرک منبع قابل Drill-down باشد.</p></article>
-        </section>
-      </div>
-    </main>
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1.3fr_.7fr]">
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="text-xs font-black text-[#0b8d85]">روند مالی</div>
+              <h2 className="mt-1 text-lg font-black text-[#102845]">فروش و جریان نقد</h2>
+            </div>
+            <span className="rounded-xl bg-[#f3f6fa] px-3 py-2 text-[11px] font-black text-[#607086]">۳۰ روز اخیر</span>
+          </div>
+          <div className="mt-6 h-64 rounded-2xl border border-dashed border-slate-200 bg-[linear-gradient(to_bottom,#ffffff,#f8fbfd)] p-5">
+            <div className="flex h-full items-end gap-3" aria-label="نمودار پس از اتصال داده‌های فضای کاری نمایش داده می‌شود">
+              {[35, 55, 42, 67, 50, 78, 61, 83, 69, 88, 72, 91].map((height, index) => (
+                <div key={index} className="flex flex-1 items-end justify-center">
+                  <div className="w-full max-w-8 rounded-t-lg bg-[#d8f3f0]" style={{ height: `${height}%` }} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] leading-6 text-[#7a8798]">ارتفاع ستون‌ها صرفاً حالت رابط کاربری است؛ ارقام واقعی فقط از دفتر فضای کاری نمایش داده می‌شوند.</p>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+          <div className="text-xs font-black text-[#0b8d85]">اقدام سریع</div>
+          <h2 className="mt-1 text-lg font-black text-[#102845]">کارهای پرتکرار</h2>
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            {quickActions.map(([label, href]) => (
+              <Link key={href} href={href} className="flex min-h-24 flex-col justify-between rounded-2xl border border-slate-200 bg-[#f8fafc] p-4 transition hover:border-[#63dfd4] hover:bg-[#f0fbfa]">
+                <span className="text-sm font-black text-[#102845]">{label}</span>
+                <span className="text-xs font-black text-[#0b8d85]">شروع ←</span>
+              </Link>
+            ))}
+          </div>
+        </article>
+      </section>
+
+      <section className="mt-5 grid gap-5 xl:grid-cols-[1fr_.9fr]">
+        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_25px_rgba(15,34,61,.04)]">
+          <div className="flex items-center justify-between border-b border-slate-100 p-5">
+            <div><div className="text-xs font-black text-[#0b8d85]">آخرین عملیات</div><h2 className="mt-1 font-black text-[#102845]">رویدادهای مالی فضای کاری</h2></div>
+            <Link href="/app/reports/financial" className="text-xs font-black text-[#0b8d85]">مشاهده گزارش‌ها</Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-right text-xs">
+              <thead className="bg-[#f8fafc] text-[#6c798c]"><tr><th className="px-5 py-3">نوع</th><th className="px-5 py-3">مرجع</th><th className="px-5 py-3">وضعیت</th><th className="px-5 py-3">تاریخ</th></tr></thead>
+              <tbody>
+                {["فاکتور فروش", "دریافت وجه", "ثبت خرید", "پرداخت تأمین‌کننده"].map((item) => (
+                  <tr key={item} className="border-t border-slate-100"><td className="px-5 py-4 font-black text-[#26354a]">{item}</td><td className="px-5 py-4 text-[#8190a3]">پس از اتصال داده</td><td className="px-5 py-4"><span className="rounded-lg bg-[#eef8f7] px-2 py-1 font-black text-[#0b8d85]">آماده نمایش</span></td><td className="px-5 py-4 text-[#8190a3]">—</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+          <div className="text-xs font-black text-[#0b8d85]">کنترل مالی</div>
+          <h2 className="mt-1 text-lg font-black text-[#102845]">وضعیت‌های نیازمند توجه</h2>
+          <div className="mt-5 space-y-3">
+            {[
+              ["مطالبات سررسیدشده", "از دفتر دریافتنی‌ها"],
+              ["بدهی‌های نزدیک سررسید", "از دفتر پرداختنی‌ها"],
+              ["مغایرت خزانه", "از جریان reconciliation"],
+              ["کمبود موجودی", "از دفتر انبار"],
+            ].map(([title, note]) => (
+              <div key={title} className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4">
+                <div><div className="text-sm font-black text-[#26354a]">{title}</div><div className="mt-1 text-[11px] text-[#8190a3]">{note}</div></div>
+                <span className="rounded-lg bg-[#f5f7fa] px-2.5 py-1.5 text-[10px] font-black text-[#6f7d90]">بدون داده</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
+    </WorkspaceShell>
   );
 }
