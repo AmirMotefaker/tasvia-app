@@ -76,6 +76,23 @@ enum OpenBalanceStatus {
   VOID
 }
 
+enum CatalogItemType {
+  STOCK_ITEM
+  SERVICE
+}
+
+enum StockMovementType {
+  OPENING
+  PURCHASE
+  SALE
+  RETURN_IN
+  RETURN_OUT
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  TRANSFER_IN
+  TRANSFER_OUT
+}
+
 enum RecoveryChannel {
   PHONE
   EMAIL
@@ -181,6 +198,9 @@ model Workspace {
   accountingJournals AccountingJournal[]
   counterparties     Counterparty[]
   openBalances       OpenBalance[]
+  catalogItems       CatalogItem[]
+  warehouses         Warehouse[]
+  stockMovements     StockMovement[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -349,4 +369,61 @@ model AccountingJournalLine {
 
   @@index([journalId])
   @@index([accountId])
+}
+
+model CatalogItem {
+  id                   String          @id @default(uuid())
+  workspaceId          String
+  workspace            Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  type                 CatalogItemType
+  name                 String
+  sku                  String?
+  barcode              String?
+  unit                 String
+  taxRateBasisPoints   Int?
+  lowStockThreshold    BigInt?
+  active               Boolean         @default(true)
+  movements            StockMovement[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  @@unique([workspaceId, sku])
+  @@index([workspaceId, type, active])
+  @@index([workspaceId, name])
+}
+
+model Warehouse {
+  id          String          @id @default(uuid())
+  workspaceId String
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  code        String
+  active      Boolean         @default(true)
+  movements   StockMovement[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([workspaceId, code])
+  @@index([workspaceId, active])
+}
+
+model StockMovement {
+  id                 String            @id
+  workspaceId        String
+  workspace          Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  warehouseId        String
+  warehouse          Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  itemId             String
+  item               CatalogItem       @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  type               StockMovementType
+  quantityMinorUnits BigInt
+  occurredAt         DateTime
+  reference          String?
+  unitCost           BigInt?
+  currency           String            @default("IRR")
+  createdAt          DateTime          @default(now())
+
+  @@index([workspaceId, occurredAt])
+  @@index([warehouseId, itemId, occurredAt])
+  @@index([workspaceId, reference])
 }
