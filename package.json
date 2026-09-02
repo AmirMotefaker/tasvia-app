@@ -14,6 +14,7 @@
     "db:rehearsal:recovery-concurrency": "node scripts/recovery-grant-concurrency-rehearsal.mjs",
     "db:rehearsal:recovery-challenge-concurrency": "node scripts/recovery-challenge-concurrency-rehearsal.mjs",
     "db:rehearsal:recovery-transaction": "node scripts/recovery-verification-transaction-rehearsal.mjs",
+    "production:readiness": "node scripts/production-readiness.mjs",
     "security:secrets": "node scripts/secret-scan.mjs",
     "test": "tsx --test tests/**/*.test.ts"
   },
