@@ -76,21 +76,28 @@ enum OpenBalanceStatus {
   VOID
 }
 
+enum RecoveryChannel {
+  PHONE
+  EMAIL
+}
+
 model User {
-  id             String       @id @default(uuid())
-  name           String?
-  email          String?      @unique
-  emailVerified  Boolean      @default(false)
-  image          String?
-  phone          String?      @unique
-  legacyPassword String?      @map("password")
-  role           Role         @default(MERCHANT)
-  merchant       Merchant?
-  sessions       Session[]
-  accounts       Account[]
-  memberships    Membership[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                 String                    @id @default(uuid())
+  name               String?
+  email              String?                   @unique
+  emailVerified      Boolean                   @default(false)
+  image              String?
+  phone              String?                   @unique
+  legacyPassword     String?                   @map("password")
+  role               Role                      @default(MERCHANT)
+  merchant           Merchant?
+  sessions           Session[]
+  accounts           Account[]
+  memberships        Membership[]
+  recoveryChallenges LegacyRecoveryChallenge[]
+  recoveryGrants     LegacyRecoveryGrant[]
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
 }
 
 model Session {
@@ -137,6 +144,31 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@index([identifier])
+}
+
+model LegacyRecoveryChallenge {
+  id              String          @id
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel         RecoveryChannel
+  destinationHint String
+  expiresAt       DateTime
+  verifiedAt      DateTime?
+  createdAt       DateTime        @default(now())
+
+  @@index([userId, expiresAt])
+}
+
+model LegacyRecoveryGrant {
+  id         String    @id
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  issuedAt   DateTime
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, expiresAt, consumedAt])
 }
 
 model Workspace {
