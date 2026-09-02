@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WorkspaceShell } from "../../../src/components/workspace/shell";
 
 const capabilities = [
   ["چندارزی", "ثبت مبلغ با ارز منبع، نرخ صریح و اثر تسعیر بدون محاسبات اعشاری شناور."],
@@ -12,50 +13,19 @@ const capabilities = [
 
 export default function CommercialControlsPage() {
   return (
-    <main className="min-h-screen bg-[#f4f7fb] text-[#0b1220]" dir="rtl">
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-        <div className="rounded-[32px] bg-[#0f223d] p-6 text-white sm:p-8">
-          <div className="text-xs font-black text-[#63dfd4]">کنترل‌های تجاری تسوین</div>
-          <h1 className="mt-3 text-3xl font-black sm:text-4xl">فروش حرفه‌ای بدون جداشدن از حسابداری واقعی.</h1>
-          <p className="mt-4 max-w-3xl text-sm leading-8 text-white/70">قیمت، تخفیف، ارز، قسط، پورسانت، بارکد و خزانه باید روی همان سند و مانده‌ای کار کنند که گزارش‌های حرفه‌ای تسوین از آن ساخته می‌شوند؛ نه یک لایه نمایشی جدا.</p>
-        </div>
-
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {capabilities.map(([title, description]) => (
-            <article key={title} className="rounded-[26px] border border-black/5 bg-white p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <h2 className="text-lg font-black">{title}</h2>
-                <span className="rounded-full bg-[#e8faf7] px-3 py-1 text-[10px] font-black text-[#007f78]">هسته فعال</span>
-              </div>
-              <p className="mt-3 text-sm leading-7 text-[#657184]">{description}</p>
-            </article>
-          ))}
-        </div>
-
-        <section className="mt-6 grid gap-4 lg:grid-cols-3">
-          <article className="rounded-[26px] bg-white p-6">
-            <div className="text-xs font-black text-[#008f87]">دقت مالی</div>
-            <h2 className="mt-2 text-xl font-black">مبلغ‌ها با عدد صحیح نگهداری می‌شوند.</h2>
-            <p className="mt-3 text-sm leading-7 text-[#657184]">قیمت، تخفیف، پورسانت و اقساط از محاسبات floating-point برای پول استفاده نمی‌کنند تا اختلاف ریالی ایجاد نشود.</p>
-          </article>
-          <article className="rounded-[26px] bg-white p-6">
-            <div className="text-xs font-black text-[#008f87]">کنترل انسانی</div>
-            <h2 className="mt-2 text-xl font-black">اتوماسیون پیشنهاد می‌دهد؛ تصمیم حساس تأیید می‌خواهد.</h2>
-            <p className="mt-3 text-sm leading-7 text-[#657184]">هیچ انتقال بانکی، وصول چک یا اقدام مالی برگشت‌ناپذیر فقط با یک پیشنهاد هوشمند اجرا نمی‌شود.</p>
-          </article>
-          <article className="rounded-[26px] bg-white p-6">
-            <div className="text-xs font-black text-[#008f87]">مسیر بعدی</div>
-            <h2 className="mt-2 text-xl font-black">اتصال این کنترل‌ها به فرم‌های فروش و انبار.</h2>
-            <p className="mt-3 text-sm leading-7 text-[#657184]">در Batch بعدی Persistence و UI عملیاتی هر قابلیت به‌صورت جداگانه به Workspace متصل می‌شود.</p>
-          </article>
-        </section>
-
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/app/sales" className="rounded-2xl bg-[#0f223d] px-5 py-3 text-sm font-black text-white">فروش و فاکتور</Link>
-          <Link href="/app/treasury" className="rounded-2xl border border-black/10 bg-white px-5 py-3 text-sm font-black">بانک و خزانه</Link>
-          <Link href="/app/inventory" className="rounded-2xl border border-black/10 bg-white px-5 py-3 text-sm font-black">کالا و انبار</Link>
-        </div>
+    <WorkspaceShell title="کنترل‌های تجاری" eyebrow="فروش حرفه‌ای" actions={<Link href="/app/sales" className="rounded-xl bg-[#102845] px-3 py-2 text-xs font-black text-white">فروش و فاکتور</Link>}>
+      <section className="rounded-[26px] bg-[#102845] p-5 text-white sm:p-7">
+        <h2 className="text-2xl font-black">قیمت، ارز، تخفیف و اقساط روی یک حقیقت مالی.</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-white/65">تمام کنترل‌های تجاری باید روی همان سند، مانده و دفتر حسابداری کار کنند؛ بدون لایه نمایشی جدا و بدون اقدام مالی برگشت‌ناپذیر خودکار.</p>
       </section>
-    </main>
+      <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {capabilities.map(([title, description]) => <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5"><div className="flex items-center justify-between gap-3"><h2 className="font-black">{title}</h2><span className="rounded-full bg-[#e8faf7] px-2.5 py-1 text-[10px] font-black text-[#007f78]">هسته فعال</span></div><p className="mt-3 text-sm leading-7 text-[#657184]">{description}</p></article>)}
+      </section>
+      <section className="mt-5 grid gap-4 lg:grid-cols-3">
+        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">دقت مالی</div><p className="mt-2 text-sm leading-7 text-[#657184]">پول با واحد صحیح نگهداری می‌شود تا اختلاف اعشاری در قیمت، تخفیف و اقساط ایجاد نشود.</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">کنترل انسانی</div><p className="mt-2 text-sm leading-7 text-[#657184]">اتوماسیون پیشنهاد می‌دهد؛ عملیات حساس همچنان Approval می‌خواهد.</p></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">اتصال عملیاتی</div><p className="mt-2 text-sm leading-7 text-[#657184]">کنترل‌ها به فروش، انبار و خزانه متصل‌اند و از مسیرهای همان Workspace استفاده می‌کنند.</p></article>
+      </section>
+    </WorkspaceShell>
   );
 }
