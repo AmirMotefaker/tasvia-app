@@ -34,10 +34,6 @@ export interface InvoiceTotals {
   grandTotal: Money;
 }
 
-function zero(currency: Money["currency"]): Money {
-  return { currency, minorUnits: 0n };
-}
-
 export function calculateTaxInvoice(invoice: TaxInvoice): InvoiceTotals {
   const currency = invoice.lines[0]?.unitPrice.currency ?? invoice.invoiceDiscount?.currency ?? "IRR";
   let subtotal = 0n;

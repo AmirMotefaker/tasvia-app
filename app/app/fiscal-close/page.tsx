@@ -10,9 +10,9 @@ export default async function FiscalClosePage() {
 
   return (
     <WorkspaceShell eyebrow="کنترل پایان دوره" title="بستن دوره مالی">
-      <section className="space-y-4">
+      <section className="space-y-4">{readiness.length === 0 ? <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">هنوز دوره مالی برای این فضای کاری تعریف نشده است.</div> : null}
         {readiness.map((r) => (
-          <article key={r.period.id} className="rounded-3xl border bg-white p-5">
+          <article key={r.period.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-lg font-black">{r.period.name}</h2>

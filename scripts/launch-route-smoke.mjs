@@ -2,7 +2,7 @@ const baseUrl = process.env.TASVIN_REHEARSAL_BASE_URL ?? "http://127.0.0.1:3000"
 const routes = [
   "/", "/product", "/integrations", "/developers", "/demo", "/sign-in",
   "/app", "/app/sales", "/app/purchases", "/app/treasury", "/app/inventory",
-  "/app/suppliers", "/app/settlements", "/app/reconciliation", "/app/reports/financial",
+  "/app/suppliers", "/app/settlements", "/app/cheques", "/app/reconciliation", "/app/reports/financial", "/app/fiscal-close", "/app/alerts",
   "/app/commercial-controls", "/app/operations-controls", "/app/platform-controls",
   "/accounting/simple", "/accounting/professional"
 ];

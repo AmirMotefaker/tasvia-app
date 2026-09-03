@@ -29,7 +29,7 @@ export default async function FinancialReportsPage() {
     <WorkspaceShell title="گزارش‌های مالی" eyebrow="داده واقعی دفتر" actions={<Link href="/accounting/professional" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black">دفتر حرفه‌ای</Link>}>
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {summary.map(([label, value]) => (
-          <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5">
+          <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
             <div className="text-xs font-bold text-slate-500">{label}</div>
             <div className="mt-3 text-xl font-black">{value}</div>
           </article>
@@ -37,7 +37,7 @@ export default async function FinancialReportsPage() {
       </section>
 
       <section className="mt-5 grid gap-4 xl:grid-cols-[1.1fr_.9fr]">
-        <article className="rounded-3xl border border-slate-200 bg-white p-5">
+        <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
           <div className="text-xs font-black text-[#0b8d85]">صورت عملکرد</div>
           <h2 className="mt-1 text-xl font-black">درآمد و هزینه ثبت‌شده</h2>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -69,7 +69,7 @@ export default async function FinancialReportsPage() {
 
       <section className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {reports.map(([title, desc]) => (
-          <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5">
+          <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
             <h3 className="font-black">{title}</h3>
             <p className="mt-2 text-sm leading-7 text-slate-500">{desc}</p>
           </article>
