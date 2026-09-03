@@ -5,7 +5,9 @@ import { resolveFirstActiveWorkspaceMembership } from "../domain/workspace/repos
 import { evaluateWorkspaceGate } from "./workspace-gate";
 
 export async function requireCurrentWorkspace() {
-  if (!authConfigured) throw new Error("AUTH_NOT_CONFIGURED");
+  if (!authConfigured) {
+    redirect("/sign-in?next=/app");
+  }
 
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });

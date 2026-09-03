@@ -10,7 +10,7 @@ export const auth = betterAuth({
   appName: "Tasvin",
   secret: authConfigured
     ? secret
-    : "tasvia-build-only-fallback-secret-32-characters-minimum",
+    : "tasvin-build-only-fallback-secret-32-characters-minimum",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
 });
