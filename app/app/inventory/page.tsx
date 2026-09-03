@@ -23,17 +23,17 @@ export default async function InventoryPage() {
   ];
 
   return (
-    <WorkspaceShell title="کالا و انبار" eyebrow="دفتر واقعی موجودی" actions={<Link href="/app/inventory" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-500">تعریف کالا و انبار در مرحله بعد</Link>}>
+    <WorkspaceShell title="کالا و انبار" eyebrow="دفتر واقعی موجودی" actions={<Link href="/app/purchases" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-600">ثبت خرید</Link>}>
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(([label, value]) => (
-          <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5">
+          <article key={label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
             <div className="text-xs font-bold text-slate-500">{label}</div>
             <div className="mt-3 text-xl font-black text-[#102845]">{value}</div>
           </article>
         ))}
       </section>
 
-      <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
+      <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
         <div>
           <div className="text-xs font-black text-[#0b8d85]">فهرست کالاها</div>
           <h2 className="mt-1 text-xl font-black">موجودی و بهای میانگین</h2>
@@ -67,8 +67,8 @@ export default async function InventoryPage() {
 
       <section className="mt-5 grid gap-4 lg:grid-cols-3">
         <article className="rounded-2xl bg-[#102845] p-5 text-white"><div className="text-xs font-black text-[#63dfd4]">کنترل منفی</div><h3 className="mt-2 font-black">خروج بدون موجودی کافی در Application Layer متوقف می‌شود</h3></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">دفتر حرکت</div><h3 className="mt-2 font-black">تمام موجودی از StockMovement محاسبه می‌شود</h3></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">ارزش‌گذاری</div><h3 className="mt-2 font-black">بهای میانگین موزون از گردش واقعی محاسبه می‌شود</h3></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-black text-[#0b8d85]">دفتر حرکت</div><h3 className="mt-2 font-black">تمام موجودی از StockMovement محاسبه می‌شود</h3></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-black text-[#0b8d85]">ارزش‌گذاری</div><h3 className="mt-2 font-black">بهای میانگین موزون از گردش واقعی محاسبه می‌شود</h3></article>
       </section>
     </WorkspaceShell>
   );

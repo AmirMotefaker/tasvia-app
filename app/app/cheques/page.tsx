@@ -29,7 +29,7 @@ export default async function ChequesPage() {
         }))}
       />
 
-      <section className="mt-5 overflow-x-auto rounded-3xl border bg-white">
+      <section className="mt-5 overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-[0_8px_25px_rgba(15,34,61,.04)]">
         <table className="w-full min-w-[900px] text-right text-xs">
           <thead className="bg-slate-50">
             <tr>
@@ -40,9 +40,9 @@ export default async function ChequesPage() {
           </thead>
           <tbody>
             {cheques.length === 0 ? (
-              <tr><td colSpan={7} className="p-10 text-center">هنوز چکی ثبت نشده است.</td></tr>
+              <tr><td colSpan={7} className="p-10 text-center text-slate-500">هنوز چکی ثبت نشده است.</td></tr>
             ) : cheques.map((cheque) => (
-              <tr key={cheque.id} className="border-t">
+              <tr key={cheque.id} className="border-t border-slate-100">
                 <td className="p-4 font-black">{cheque.chequeNumber}</td>
                 <td className="p-4">{cheque.counterparty.name}</td>
                 <td className="p-4">{cheque.direction === "RECEIVED" ? "دریافتی" : "پرداختی"}</td>
