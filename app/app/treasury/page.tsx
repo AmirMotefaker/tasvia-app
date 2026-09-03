@@ -1,65 +1,199 @@
 import Link from "next/link";
 import { WorkspaceShell } from "../../../src/components/workspace/shell";
+import { requireCurrentWorkspace } from "../../../src/auth/current-workspace";
+import { buildTreasuryProjection } from "../../../src/application/accounting/treasury-projection";
+import { listSettlementOptions } from "../../../src/application/settlements/settlement-service";
+import { TreasurySettlementForm } from "./settlement-form";
 
-const accounts = [
-  ["حساب بانکی", "در انتظار داده", "بانک"],
-  ["صندوق", "در انتظار داده", "نقد"],
-  ["تنخواه", "در انتظار داده", "خرد"],
-  ["اسناد دریافتنی", "در انتظار داده", "چک"],
-];
+function money(value: bigint) {
+  return `${new Intl.NumberFormat("fa-IR").format(value)} ریال`;
+}
 
-export default function TreasuryWorkspacePage() {
+function date(value: Date) {
+  return new Intl.DateTimeFormat("fa-IR", {
+    dateStyle: "medium",
+  }).format(value);
+}
+
+export default async function TreasuryWorkspacePage() {
+  const current = await requireCurrentWorkspace();
+
+  const [projection, settlements] = await Promise.all([
+    buildTreasuryProjection(current.workspace.id),
+    listSettlementOptions(current.workspace.id),
+  ]);
+
+  const total = projection.accounts.reduce(
+    (sum, account) => sum + account.balance,
+    0n,
+  );
+
+  const receivableTotal = settlements.receivables.reduce(
+    (sum, balance) => sum + balance.outstandingAmount,
+    0n,
+  );
+
+  const payableTotal = settlements.payables.reduce(
+    (sum, balance) => sum + balance.outstandingAmount,
+    0n,
+  );
+
   return (
     <WorkspaceShell
-      eyebrow="خزانه و جریان نقد"
+      eyebrow="خزانه، وصول و پرداخت"
       title="خزانه‌داری"
-      actions={<Link href="/accounting/simple/receipt" className="rounded-xl bg-[#102845] px-4 py-2.5 text-xs font-black text-white">دریافت جدید +</Link>}
+      actions={
+        <Link
+          href="/app/reconciliation"
+          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-black"
+        >
+          مغایرت‌گیری
+        </Link>
+      }
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {accounts.map(([title, value, kind]) => (
-          <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
-            <div className="flex items-center justify-between"><span className="text-xs font-black text-[#6c798c]">{title}</span><span className="rounded-lg bg-[#eef8f7] px-2 py-1 text-[10px] font-black text-[#0b8d85]">{kind}</span></div>
-            <div className="mt-4 text-xl font-black text-[#102845]">{value}</div>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="text-xs font-black text-slate-500">
+            کل نقد و بانک
+          </div>
+          <div className="mt-4 text-xl font-black">{money(total)}</div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="text-xs font-black text-slate-500">
+            مطالبات باز
+          </div>
+          <div className="mt-4 text-xl font-black">
+            {money(receivableTotal)}
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="text-xs font-black text-slate-500">
+            بدهی باز
+          </div>
+          <div className="mt-4 text-xl font-black">
+            {money(payableTotal)}
+          </div>
+        </article>
+
+        <article className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="text-xs font-black text-slate-500">
+            مانده‌های باز
+          </div>
+          <div className="mt-4 text-xl font-black">
+            {new Intl.NumberFormat("fa-IR").format(
+              settlements.receivables.length +
+                settlements.payables.length,
+            )}
+          </div>
+        </article>
+      </section>
+
+      <section className="mt-5">
+        <div className="mb-3">
+          <div className="text-xs font-black text-[#0b8d85]">
+            تسویه واقعی
+          </div>
+          <h2 className="mt-1 text-xl font-black">
+            دریافت و پرداخت تخصیص‌یافته
+          </h2>
+        </div>
+
+        <TreasurySettlementForm
+          receivables={settlements.receivables.map((balance) => ({
+            ...balance,
+            outstandingAmount: balance.outstandingAmount.toString(),
+            dueAt: balance.dueAt.toISOString(),
+          }))}
+          payables={settlements.payables.map((balance) => ({
+            ...balance,
+            outstandingAmount: balance.outstandingAmount.toString(),
+            dueAt: balance.dueAt.toISOString(),
+          }))}
+          treasuryAccounts={settlements.treasuryAccounts}
+        />
+      </section>
+
+      <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {projection.accounts.map((account) => (
+          <article
+            key={account.id}
+            className="rounded-2xl border border-slate-200 bg-white p-5"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-black text-slate-500">
+                {account.name}
+              </span>
+              <span className="rounded-lg bg-[#eef8f7] px-2 py-1 text-[10px] font-black text-[#0b8d85]">
+                {account.code}
+              </span>
+            </div>
+            <div className="mt-4 text-xl font-black">
+              {money(account.balance)}
+            </div>
           </article>
         ))}
       </section>
 
-      <section className="mt-5 grid gap-5 xl:grid-cols-[1.15fr_.85fr]">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
-          <div className="flex items-center justify-between gap-3">
-            <div><div className="text-xs font-black text-[#0b8d85]">گردش نقد</div><h2 className="mt-1 text-lg font-black text-[#102845]">دریافت، پرداخت و مانده</h2></div>
-            <Link href="/app/reconciliation" className="text-xs font-black text-[#0b8d85]">مغایرت‌گیری</Link>
+      <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 p-5">
+          <div className="text-xs font-black text-[#0b8d85]">
+            آخرین گردش‌ها
           </div>
-          <div className="mt-6 grid h-64 grid-cols-12 items-end gap-2 rounded-2xl bg-[#f8fafc] p-5">
-            {[48, 70, 55, 82, 63, 74, 52, 86, 66, 78, 58, 72].map((height, index) => (
-              <div key={index} className="flex h-full items-end"><div className="w-full rounded-t-md bg-[#bce9e5]" style={{ height: `${height}%` }} /></div>
-            ))}
-          </div>
-          <p className="mt-3 text-[11px] leading-6 text-[#7b8899]">نمودار فعلی فقط حالت رابط است و مقدار مالی ساختگی نمایش نمی‌دهد؛ داده واقعی از دفتر خزانه خوانده می‌شود.</p>
-        </article>
-
-        <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_25px_rgba(15,34,61,.04)]">
-          <div className="border-b border-slate-100 p-5"><div className="text-xs font-black text-[#0b8d85]">حساب‌ها</div><h2 className="mt-1 text-lg font-black text-[#102845]">بانک، صندوق و تنخواه</h2></div>
-          <div className="divide-y divide-slate-100">
-            {["بانک‌های فعال", "صندوق‌های فعال", "تنخواه‌گردان‌ها", "چک‌های در جریان"].map((label) => (
-              <div key={label} className="flex items-center justify-between gap-4 p-4"><div><div className="text-sm font-black text-[#26354a]">{label}</div><div className="mt-1 text-[11px] text-[#8190a3]">پس از اتصال داده فضای کاری</div></div><span className="text-xs font-black text-[#0b8d85]">—</span></div>
-            ))}
-          </div>
-        </article>
-      </section>
-
-      <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_8px_25px_rgba(15,34,61,.04)]">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-5"><div><div className="text-xs font-black text-[#0b8d85]">آخرین گردش‌ها</div><h2 className="mt-1 font-black text-[#102845]">تراکنش‌های خزانه</h2></div><div className="flex gap-2"><Link href="/accounting/simple/payment" className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-[#526177]">پرداخت</Link><Link href="/accounting/simple/receipt" className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-black text-[#526177]">دریافت</Link></div></div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-right text-xs">
-            <thead className="bg-[#f8fafc] text-[#66758a]"><tr><th className="px-5 py-3">نوع</th><th className="px-5 py-3">حساب</th><th className="px-5 py-3">مرجع</th><th className="px-5 py-3">مبلغ</th><th className="px-5 py-3">وضعیت</th></tr></thead>
-            <tbody>
-              {["دریافت مشتری", "پرداخت تأمین‌کننده", "انتقال داخلی", "چک"].map((type) => (
-                <tr key={type} className="border-t border-slate-100"><td className="px-5 py-4 font-black text-[#26354a]">{type}</td><td className="px-5 py-4 text-[#7a8798]">پس از اتصال داده</td><td className="px-5 py-4 text-[#7a8798]">—</td><td className="px-5 py-4 text-[#7a8798]">در انتظار داده</td><td className="px-5 py-4"><span className="rounded-lg bg-[#eef8f7] px-2.5 py-1.5 font-black text-[#0b8d85]">آماده نمایش</span></td></tr>
-              ))}
-            </tbody>
-          </table>
+          <h2 className="mt-1 font-black">
+            تراکنش‌های واقعی خزانه
+          </h2>
         </div>
+
+        {projection.recentMovements.length === 0 ? (
+          <div className="p-6 text-sm text-slate-500">
+            هنوز گردش خزانه‌ای ثبت نشده است.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] text-right text-xs">
+              <thead className="bg-slate-50 text-slate-500">
+                <tr>
+                  <th className="px-5 py-3">نوع</th>
+                  <th className="px-5 py-3">حساب</th>
+                  <th className="px-5 py-3">شرح / مرجع</th>
+                  <th className="px-5 py-3">مبلغ</th>
+                  <th className="px-5 py-3">تاریخ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projection.recentMovements.map((movement) => (
+                  <tr
+                    key={movement.id}
+                    className="border-t border-slate-100"
+                  >
+                    <td className="px-5 py-4 font-black">
+                      {movement.direction === "IN"
+                        ? "ورودی"
+                        : "خروجی"}
+                    </td>
+                    <td className="px-5 py-4">
+                      {movement.accountName}
+                    </td>
+                    <td className="px-5 py-4">
+                      {movement.description}
+                      {movement.reference
+                        ? ` · ${movement.reference}`
+                        : ""}
+                    </td>
+                    <td className="px-5 py-4 font-black">
+                      {money(movement.amount)}
+                    </td>
+                    <td className="px-5 py-4">
+                      {date(movement.occurredAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </WorkspaceShell>
   );

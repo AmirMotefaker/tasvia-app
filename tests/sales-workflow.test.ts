@@ -1,0 +1,3 @@
+import test from "node:test";import assert from "node:assert/strict";import{assertSalesTransition,calculateSalesTotals}from"../src/domain/sales/sale";
+test("sales totals remain exact",()=>assert.deepEqual(calculateSalesTotals([{itemId:"a",quantityMinorUnits:2n,unitPrice:1000n,discount:100n,tax:90n}]),{subtotal:2000n,discount:100n,tax:90n,total:1990n}));
+test("sales lifecycle blocks direct draft posting",()=>{assert.doesNotThrow(()=>assertSalesTransition("DRAFT","SUBMITTED"));assert.doesNotThrow(()=>assertSalesTransition("SUBMITTED","APPROVED"));assert.doesNotThrow(()=>assertSalesTransition("APPROVED","POSTED"));assert.throws(()=>assertSalesTransition("DRAFT","POSTED"))});
