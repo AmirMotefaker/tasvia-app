@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 };
 
 const quickActions = [
-  ["فاکتور فروش", "/accounting/simple/sale"],
-  ["ثبت خرید", "/accounting/simple/purchase"],
-  ["دریافت وجه", "/accounting/simple/receipt"],
-  ["پرداخت وجه", "/accounting/simple/payment"],
+  ["فاکتور فروش", "/app/sales"],
+  ["ثبت خرید", "/app/purchases"],
+  ["دریافت / پرداخت", "/app/treasury"],
+  ["چک‌ها", "/app/cheques"],
 ];
 
 function money(value: bigint) {
@@ -40,7 +40,7 @@ export default async function WorkspacePage() {
     <WorkspaceShell
       eyebrow="مرکز فرمان مالی"
       title="داشبورد"
-      actions={<Link href="/accounting/simple" className="rounded-xl bg-[#102845] px-4 py-2.5 text-xs font-black text-white">ثبت سریع +</Link>}
+      actions={<Link href="/app/sales" className="rounded-xl bg-[#102845] px-4 py-2.5 text-xs font-black text-white">فروش جدید +</Link>}
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(([title, value, note]) => (
