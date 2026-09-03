@@ -89,3 +89,108 @@ export async function closeFiscalPeriod(input: {
     });
   });
 }
+
+export async function reopenFiscalPeriod(input: {
+  workspaceId: string;
+  actorId: string;
+  fiscalPeriodId: string;
+  reason: string;
+}) {
+  assertFinancialWriteEnvironment();
+
+  const reason = input.reason.trim();
+  if (reason.length < 10) throw new Error("FISCAL_REOPEN_REASON_REQUIRED");
+
+  return prisma.$transaction(async (tx) => {
+    const period = await tx.fiscalPeriod.findFirst({
+      where: {
+        id: input.fiscalPeriodId,
+        workspaceId: input.workspaceId,
+      },
+    });
+
+    if (!period) throw new Error("FISCAL_PERIOD_NOT_FOUND");
+    if (period.status === "OPEN") return period;
+
+    return tx.fiscalPeriod.update({
+      where: { id: period.id },
+      data: { status: "OPEN" },
+    });
+  });
+}
+
+export async function reversePostedJournal(input: {
+  workspaceId: string;
+  actorId: string;
+  journalId: string;
+  reason: string;
+  occurredAt: Date;
+}) {
+  assertFinancialWriteEnvironment();
+
+  const reason = input.reason.trim();
+  if (reason.length < 10) throw new Error("REVERSAL_REASON_REQUIRED");
+
+  return prisma.$transaction(async (tx) => {
+    const original = await tx.accountingJournal.findFirst({
+      where: {
+        id: input.journalId,
+        workspaceId: input.workspaceId,
+        status: "POSTED",
+      },
+      include: { lines: true },
+    });
+
+    if (!original) throw new Error("POSTED_JOURNAL_NOT_FOUND");
+
+    const existing = await tx.accountingJournal.findFirst({
+      where: {
+        workspaceId: input.workspaceId,
+        reversalOfId: original.id,
+      },
+    });
+    if (existing) return existing;
+
+    const period = await tx.fiscalPeriod.findFirst({
+      where: {
+        workspaceId: input.workspaceId,
+        status: "OPEN",
+        startsAt: { lte: input.occurredAt },
+        endsAt: { gte: input.occurredAt },
+      },
+    });
+    if (!period) throw new Error("OPEN_FISCAL_PERIOD_REQUIRED");
+
+    const reversal = await tx.accountingJournal.create({
+      data: {
+        workspaceId: input.workspaceId,
+        fiscalPeriodId: period.id,
+        occurredAt: input.occurredAt,
+        description: `برگشت سند: ${reason}`,
+        status: "POSTED",
+        sourceDocumentId: original.sourceDocumentId,
+        reversalOfId: original.id,
+        idempotencyKey: `reversal:${input.workspaceId}:${original.id}`,
+        postedAt: new Date(),
+        lines: {
+          create: original.lines.map((line) => ({
+            accountId: line.accountId,
+            debit: line.credit,
+            credit: line.debit,
+            description: `برگشت: ${reason}`,
+          })),
+        },
+      },
+    });
+
+    await tx.accountingJournal.update({
+      where: { id: original.id },
+      data: {
+        status: "REVERSED",
+        reversedAt: new Date(),
+      },
+    });
+
+    return reversal;
+  });
+}

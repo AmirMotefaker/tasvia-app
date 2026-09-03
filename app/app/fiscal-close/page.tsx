@@ -1,7 +1,7 @@
 import { WorkspaceShell } from "../../../src/components/workspace/shell";
 import { requireCurrentWorkspace } from "../../../src/auth/current-workspace";
 import { fiscalCloseReadiness, listFiscalPeriods } from "../../../src/application/accounting/fiscal-close-service";
-import { closeFiscalPeriodAction } from "./actions";
+import { closeFiscalPeriodAction, reopenFiscalPeriodAction } from "./actions";
 
 export default async function FiscalClosePage() {
   const current = await requireCurrentWorkspace();
@@ -40,7 +40,23 @@ export default async function FiscalClosePage() {
                   بستن قطعی دوره
                 </button>
               </form>
-            ) : null}
+            ) : (
+              <form
+                className="mt-4 flex flex-col gap-3 md:flex-row"
+                action={reopenFiscalPeriodAction.bind(null, r.period.id)}
+              >
+                <input
+                  name="reason"
+                  required
+                  minLength={10}
+                  placeholder="دلیل بازگشایی دوره مالی"
+                  className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 text-xs"
+                />
+                <button className="rounded-xl border border-slate-300 px-4 py-3 text-xs font-black">
+                  بازگشایی کنترل‌شده
+                </button>
+              </form>
+            )}
           </article>
         ))}
       </section>
