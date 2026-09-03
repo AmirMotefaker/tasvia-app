@@ -1,13 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 :root {
   --background: #f4f7fb;
   --foreground: #0b1220;
+  --font-persian: "Vazirmatn", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html {
   background: var(--background);
@@ -21,27 +21,13 @@ body {
   overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font-family:
-    Vazirmatn,
-    IRANSansX,
-    "Noto Sans Arabic",
-    "Segoe UI",
-    Tahoma,
-    Arial,
-    sans-serif;
+  font-family: var(--font-persian);
   font-feature-settings: "ss01" 1, "kern" 1;
+  font-synthesis: none;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  touch-action: manipulation;
-}
+button, input, textarea, select { font: inherit; }
+button { touch-action: manipulation; }
 
 ::selection {
   background: #d8f3ef;

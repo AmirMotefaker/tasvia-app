@@ -44,7 +44,7 @@ export default async function WorkspacePage() {
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map(([title, value, note]) => (
-          <article key={title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]">
+          <article key={title} className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_10px_30px_rgba(15,34,61,.045)]">
             <div className="text-xs font-black text-[#64748b]">{title}</div>
             <div className="mt-4 text-xl font-black text-[#102845]">{value}</div>
             <div className="mt-2 text-[11px] font-bold text-[#8290a4]">{note}</div>
@@ -53,7 +53,7 @@ export default async function WorkspacePage() {
       </section>
 
       <section className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+        <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_10px_30px_rgba(15,34,61,.045)] sm:p-6">
           <div className="text-xs font-black text-[#0b8d85]">تصویر مالی واقعی</div>
           <h2 className="mt-1 text-lg font-black text-[#102845]">خلاصه دفتر فضای کاری</h2>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -71,7 +71,7 @@ export default async function WorkspacePage() {
           </div>
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+        <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_10px_30px_rgba(15,34,61,.045)] sm:p-6">
           <div className="text-xs font-black text-[#0b8d85]">اقدام سریع</div>
           <h2 className="mt-1 text-lg font-black text-[#102845]">کارهای پرتکرار</h2>
           <div className="mt-5 grid grid-cols-2 gap-3">
@@ -112,7 +112,7 @@ export default async function WorkspacePage() {
           )}
         </article>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)] sm:p-6">
+        <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_10px_30px_rgba(15,34,61,.045)] sm:p-6">
           <div className="text-xs font-black text-[#0b8d85]">کنترل مالی</div>
           <h2 className="mt-1 text-lg font-black text-[#102845]">نیازمند توجه</h2>
           <div className="mt-5 space-y-3">
