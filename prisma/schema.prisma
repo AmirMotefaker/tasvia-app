@@ -93,6 +93,15 @@ enum StockMovementType {
   TRANSFER_OUT
 }
 
+enum PurchaseStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  POSTED
+  PAID
+  CANCELLED
+}
+
 enum RecoveryChannel {
   PHONE
   EMAIL
@@ -201,6 +210,7 @@ model Workspace {
   catalogItems       CatalogItem[]
   warehouses         Warehouse[]
   stockMovements     StockMovement[]
+  purchaseInvoices   PurchaseInvoice[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -260,7 +270,8 @@ model Counterparty {
   phone         String?
   email         String?
   active        Boolean          @default(true)
-  openBalances  OpenBalance[]
+  openBalances      OpenBalance[]
+  purchaseInvoices  PurchaseInvoice[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -384,6 +395,7 @@ model CatalogItem {
   lowStockThreshold    BigInt?
   active               Boolean         @default(true)
   movements            StockMovement[]
+  purchaseLines        PurchaseInvoiceLine[]
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
 
@@ -399,7 +411,8 @@ model Warehouse {
   name        String
   code        String
   active      Boolean         @default(true)
-  movements   StockMovement[]
+  movements        StockMovement[]
+  purchaseInvoices PurchaseInvoice[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -426,4 +439,73 @@ model StockMovement {
   @@index([workspaceId, occurredAt])
   @@index([warehouseId, itemId, occurredAt])
   @@index([workspaceId, reference])
+}
+
+model PurchaseInvoice {
+  id               String          @id @default(uuid())
+  workspaceId      String
+  workspace        Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  supplierId       String
+  supplier         Counterparty    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  warehouseId      String
+  warehouse        Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  invoiceNumber    String
+  status           PurchaseStatus  @default(DRAFT)
+  issuedAt         DateTime
+  dueAt            DateTime
+  subtotal         BigInt
+  discount         BigInt          @default(0)
+  tax              BigInt          @default(0)
+  total            BigInt
+  currency         String          @default("IRR")
+  createdBy        String
+  submittedAt      DateTime?
+  submittedBy      String?
+  approvedAt       DateTime?
+  approvedBy       String?
+  postedAt         DateTime?
+  postedBy         String?
+  cancelledAt      DateTime?
+  cancelledBy      String?
+  postedJournalId  String?
+  payableId        String?
+  lines            PurchaseInvoiceLine[]
+  statusHistory    PurchaseStatusHistory[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@unique([workspaceId, invoiceNumber])
+  @@index([workspaceId, status, issuedAt])
+  @@index([supplierId, status, dueAt])
+  @@index([warehouseId, issuedAt])
+}
+
+model PurchaseInvoiceLine {
+  id                 String          @id @default(uuid())
+  purchaseInvoiceId  String
+  purchaseInvoice    PurchaseInvoice @relation(fields: [purchaseInvoiceId], references: [id], onDelete: Cascade)
+  itemId             String
+  item               CatalogItem     @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  quantityMinorUnits BigInt
+  unitPrice           BigInt
+  discount            BigInt         @default(0)
+  tax                 BigInt         @default(0)
+  lineTotal           BigInt
+  createdAt           DateTime       @default(now())
+
+  @@index([purchaseInvoiceId])
+  @@index([itemId])
+}
+
+model PurchaseStatusHistory {
+  id                String          @id @default(uuid())
+  purchaseInvoiceId String
+  purchaseInvoice   PurchaseInvoice @relation(fields: [purchaseInvoiceId], references: [id], onDelete: Cascade)
+  fromStatus        PurchaseStatus?
+  toStatus          PurchaseStatus
+  changedBy         String
+  changedAt         DateTime        @default(now())
+  note              String?
+
+  @@index([purchaseInvoiceId, changedAt])
 }
