@@ -1,22 +1,97 @@
 import Link from "next/link";
 import { WorkspaceShell } from "../../../src/components/workspace/shell";
+import { requireCurrentWorkspace } from "../../../src/auth/current-workspace";
+import { listReconciliationWorkspace, reconciliationConfidence } from "../../../src/application/reconciliation/reconciliation-service";
+import { createEvidenceAction, matchEvidenceAction } from "./actions";
 
-const queues = [
-  ["نیازمند تطبیق", "در انتظار داده"],
-  ["نیازمند مدرک", "در انتظار داده"],
-  ["نیازمند تصمیم", "در انتظار داده"],
-  ["حل‌شده", "از Audit"],
-];
+export default async function ReconciliationPage() {
+  const current = await requireCurrentWorkspace();
+  const data = await listReconciliationWorkspace(current.workspace.id);
 
-export default function ReconciliationPage() {
+  const pending = data.evidence.filter((x) => x.status === "PENDING");
+  const matched = data.evidence.filter((x) => x.status === "MATCHED");
+
   return (
-    <WorkspaceShell title="مغایرت‌گیری" eyebrow="کنترل و تطبیق" actions={<Link href="/app/treasury" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black">باز کردن خزانه</Link>}>
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{queues.map(([a,b])=><article key={a} className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">{a}</div><div className="mt-3 text-xl font-black">{b}</div></article>)}</section>
-      <section className="mt-5 grid gap-4 xl:grid-cols-[1.15fr_.85fr]">
-        <article className="rounded-3xl border border-slate-200 bg-white p-5"><div><div className="text-xs font-black text-[#0b8d85]">صف بررسی</div><h2 className="mt-1 text-xl font-black">شواهد، تطابق و تصمیم</h2></div><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[720px] text-right text-sm"><thead className="bg-slate-50 text-xs text-slate-500"><tr>{['مرجع','مبلغ','تاریخ','تطابق پیشنهادی','اطمینان','اقدام'].map(h=><th key={h} className="px-4 py-3 font-black">{h}</th>)}</tr></thead><tbody><tr className="border-t border-slate-100"><td colSpan={6} className="px-4 py-10 text-center font-bold text-slate-400">برای شروع، تراکنش و شواهد واقعی Workspace لازم است.</td></tr></tbody></table></div></article>
-        <article className="rounded-3xl bg-[#102845] p-5 text-white"><div className="text-xs font-black text-[#63dfd4]">فرآیند کنترل‌شده</div><div className="mt-5 space-y-3">{[['۱','جمع‌آوری شواهد'],['۲','پیشنهاد تطبیق'],['۳','تصمیم انسانی'],['۴','ثبت Audit']].map(([n,t])=><div key={n} className="flex items-center gap-3 rounded-2xl bg-white/7 p-4"><span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#63dfd4] font-black text-[#102845]">{n}</span><span className="text-sm font-black">{t}</span></div>)}</div><p className="mt-5 text-xs leading-6 text-white/55">بدون داده بانکی معتبر، هیچ رکوردی «تأیید بانکی» اعلام نمی‌شود.</p></article>
+    <WorkspaceShell
+      title="مغایرت‌گیری"
+      eyebrow="کنترل و تطبیق واقعی"
+      actions={<Link href="/app/treasury" className="rounded-xl border px-4 py-2.5 text-xs font-black">خزانه</Link>}
+    >
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          ["در انتظار تطبیق", pending.length],
+          ["تطبیق‌شده", matched.length],
+          ["ردشده", data.evidence.filter((x) => x.status === "REJECTED").length],
+          ["گردش خزانه", data.journalLines.length],
+        ].map(([a, b]) => (
+          <article key={String(a)} className="rounded-2xl border bg-white p-5">
+            <div className="text-xs font-bold text-slate-500">{a}</div>
+            <div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(Number(b))}</div>
+          </article>
+        ))}
       </section>
-      <section className="mt-5 grid gap-4 lg:grid-cols-3"><article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">شواهد</div><h3 className="mt-2 font-black">رسید، زمان، مبلغ و مرجع</h3></article><article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">هوش مالی</div><h3 className="mt-2 font-black">پیشنهاد می‌دهد؛ قطعی نمی‌کند</h3></article><article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-black text-[#0b8d85]">Audit</div><h3 className="mt-2 font-black">کاربر، زمان و دلیل تصمیم ثبت می‌شود</h3></article></section>
+
+      <form action={createEvidenceAction} className="mt-5 grid gap-3 rounded-3xl border bg-white p-5 md:grid-cols-3 xl:grid-cols-6">
+        <select name="accountCode" className="rounded-xl border p-3">
+          {data.treasuryAccounts.map((a) => <option key={a.id} value={a.code}>{a.name}</option>)}
+        </select>
+        <select name="direction" className="rounded-xl border p-3">
+          <option value="IN">ورودی بانک</option>
+          <option value="OUT">خروجی بانک</option>
+        </select>
+        <input name="externalRef" required placeholder="مرجع بانک" className="rounded-xl border p-3" />
+        <input name="amount" required placeholder="مبلغ" className="rounded-xl border p-3" />
+        <input name="occurredAt" type="date" required className="rounded-xl border p-3" />
+        <button className="rounded-xl bg-[#102845] p-3 font-black text-white">ثبت شاهد بانکی</button>
+      </form>
+
+      <section className="mt-5 overflow-x-auto rounded-3xl border bg-white">
+        <table className="w-full min-w-[1000px] text-right text-xs">
+          <thead className="bg-slate-50">
+            <tr>{["مرجع","مبلغ","تاریخ","وضعیت","بهترین تطابق","اطمینان","اقدام"].map((x)=><th key={x} className="p-4">{x}</th>)}</tr>
+          </thead>
+          <tbody>
+            {data.evidence.length === 0 ? (
+              <tr><td colSpan={7} className="p-10 text-center">هنوز شاهد بانکی ثبت نشده است.</td></tr>
+            ) : data.evidence.map((e) => {
+              const candidates = data.journalLines
+                .filter((line) => line.account.code === e.accountCode)
+                .map((line) => {
+                  const amount = line.debit > 0n ? line.debit : line.credit;
+                  const score = reconciliationConfidence({
+                    evidenceAmount: e.amount,
+                    journalAmount: amount,
+                    evidenceDate: e.occurredAt,
+                    journalDate: line.journal.occurredAt,
+                    evidenceRef: e.externalRef,
+                    journalRef: line.journal.sourceDocumentId,
+                  });
+                  return { line, score, amount };
+                })
+                .sort((a,b)=>b.score-a.score);
+              const best = candidates[0];
+
+              return (
+                <tr key={e.id} className="border-t">
+                  <td className="p-4 font-black">{e.externalRef}</td>
+                  <td className="p-4">{new Intl.NumberFormat("fa-IR").format(e.amount)} ریال</td>
+                  <td className="p-4">{new Intl.DateTimeFormat("fa-IR").format(e.occurredAt)}</td>
+                  <td className="p-4">{e.status}</td>
+                  <td className="p-4">{best?.line.journal.description ?? "—"}</td>
+                  <td className="p-4">{best ? `${new Intl.NumberFormat("fa-IR").format(best.score)}٪` : "—"}</td>
+                  <td className="p-4">
+                    {e.status === "PENDING" && best && best.score >= 60 ? (
+                      <form action={async()=>{"use server";await matchEvidenceAction(e.id,best.line.id)}}>
+                        <button className="rounded-lg bg-[#102845] px-3 py-2 text-white">تأیید تطبیق</button>
+                      </form>
+                    ) : "—"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
     </WorkspaceShell>
   );
 }

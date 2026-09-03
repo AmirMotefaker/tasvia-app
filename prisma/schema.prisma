@@ -93,6 +93,25 @@ enum StockMovementType {
   TRANSFER_OUT
 }
 
+enum ChequeRecordDirection {
+  RECEIVED
+  ISSUED
+}
+
+enum ChequeRecordStatus {
+  REGISTERED
+  DUE
+  CLEARED
+  BOUNCED
+  CANCELLED
+}
+
+enum ReconciliationRecordStatus {
+  PENDING
+  MATCHED
+  REJECTED
+}
+
 enum SalesStatus {
   DRAFT
   SUBMITTED
@@ -221,6 +240,8 @@ model Workspace {
   stockMovements     StockMovement[]
   purchaseInvoices   PurchaseInvoice[]
   salesInvoices      SalesInvoice[]
+  chequeRecords      ChequeRecord[]
+  bankEvidence       BankEvidence[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -283,6 +304,7 @@ model Counterparty {
   openBalances      OpenBalance[]
   purchaseInvoices  PurchaseInvoice[]
   salesInvoices     SalesInvoice[]
+  chequeRecords     ChequeRecord[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -592,4 +614,59 @@ model SalesStatusHistory {
   note           String?
 
   @@index([salesInvoiceId, changedAt])
+}
+
+model ChequeRecord {
+  id               String                @id @default(uuid())
+  workspaceId      String
+  workspace        Workspace             @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  counterpartyId   String
+  counterparty     Counterparty          @relation(fields: [counterpartyId], references: [id], onDelete: Restrict)
+  direction        ChequeRecordDirection
+  chequeNumber     String
+  sayadId          String?
+  bankName         String?
+  accountReference String?
+  amount           BigInt
+  currency         String                @default("IRR")
+  issuedAt         DateTime
+  dueAt            DateTime
+  status           ChequeRecordStatus    @default(REGISTERED)
+  openBalanceId    String?
+  treasuryAccountCode String?
+  clearedJournalId String?
+  createdBy        String
+  statusChangedBy  String?
+  statusChangedAt  DateTime?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  @@unique([workspaceId, chequeNumber])
+  @@index([workspaceId, status, dueAt])
+  @@index([counterpartyId, status])
+  @@index([openBalanceId])
+}
+
+model BankEvidence {
+  id              String                     @id @default(uuid())
+  workspaceId     String
+  workspace       Workspace                  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  accountCode     String
+  externalRef     String
+  amount          BigInt
+  direction       String
+  occurredAt      DateTime
+  description     String?
+  status          ReconciliationRecordStatus @default(PENDING)
+  matchedJournalId String?
+  confidenceScore Int?
+  decidedBy       String?
+  decidedAt       DateTime?
+  createdBy       String
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  @@unique([workspaceId, accountCode, externalRef])
+  @@index([workspaceId, status, occurredAt])
+  @@index([matchedJournalId])
 }
