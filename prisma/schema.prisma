@@ -93,6 +93,15 @@ enum StockMovementType {
   TRANSFER_OUT
 }
 
+enum SalesStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  POSTED
+  PAID
+  CANCELLED
+}
+
 enum PurchaseStatus {
   DRAFT
   SUBMITTED
@@ -211,6 +220,7 @@ model Workspace {
   warehouses         Warehouse[]
   stockMovements     StockMovement[]
   purchaseInvoices   PurchaseInvoice[]
+  salesInvoices      SalesInvoice[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -272,6 +282,7 @@ model Counterparty {
   active        Boolean          @default(true)
   openBalances      OpenBalance[]
   purchaseInvoices  PurchaseInvoice[]
+  salesInvoices     SalesInvoice[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -396,6 +407,7 @@ model CatalogItem {
   active               Boolean         @default(true)
   movements            StockMovement[]
   purchaseLines        PurchaseInvoiceLine[]
+  salesLines           SalesInvoiceLine[]
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
 
@@ -413,6 +425,7 @@ model Warehouse {
   active      Boolean         @default(true)
   movements        StockMovement[]
   purchaseInvoices PurchaseInvoice[]
+  salesInvoices    SalesInvoice[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -508,4 +521,75 @@ model PurchaseStatusHistory {
   note              String?
 
   @@index([purchaseInvoiceId, changedAt])
+}
+
+model SalesInvoice {
+  id              String        @id @default(uuid())
+  workspaceId     String
+  workspace       Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  customerId      String
+  customer        Counterparty  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  warehouseId     String
+  warehouse       Warehouse     @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  invoiceNumber   String
+  status          SalesStatus   @default(DRAFT)
+  issuedAt        DateTime
+  dueAt           DateTime
+  subtotal        BigInt
+  discount        BigInt        @default(0)
+  tax             BigInt        @default(0)
+  total           BigInt
+  cogsTotal       BigInt        @default(0)
+  currency        String        @default("IRR")
+  createdBy       String
+  submittedAt     DateTime?
+  submittedBy     String?
+  approvedAt      DateTime?
+  approvedBy      String?
+  postedAt        DateTime?
+  postedBy        String?
+  cancelledAt     DateTime?
+  cancelledBy     String?
+  postedJournalId String?
+  cogsJournalId   String?
+  receivableId    String?
+  lines           SalesInvoiceLine[]
+  statusHistory   SalesStatusHistory[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([workspaceId, invoiceNumber])
+  @@index([workspaceId, status, issuedAt])
+  @@index([customerId, status, dueAt])
+  @@index([warehouseId, issuedAt])
+}
+
+model SalesInvoiceLine {
+  id                 String       @id @default(uuid())
+  salesInvoiceId     String
+  salesInvoice       SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
+  itemId             String
+  item               CatalogItem  @relation(fields: [itemId], references: [id], onDelete: Restrict)
+  quantityMinorUnits BigInt
+  unitPrice           BigInt
+  discount            BigInt      @default(0)
+  tax                 BigInt      @default(0)
+  lineTotal           BigInt
+  createdAt           DateTime     @default(now())
+
+  @@index([salesInvoiceId])
+  @@index([itemId])
+}
+
+model SalesStatusHistory {
+  id             String       @id @default(uuid())
+  salesInvoiceId String
+  salesInvoice   SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
+  fromStatus     SalesStatus?
+  toStatus       SalesStatus
+  changedBy      String
+  changedAt      DateTime     @default(now())
+  note           String?
+
+  @@index([salesInvoiceId, changedAt])
 }
