@@ -29,10 +29,10 @@ export default async function PurchasesPage() {
   return (
     <WorkspaceShell title="خرید" eyebrow="خرید، انبار و بدهی تأمین‌کننده">
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">تعداد اسناد</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(purchases.length)}</div></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">خرید ثبت مالی‌شده</div><div className="mt-3 text-xl font-black">{money(postedTotal)}</div></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">تأمین‌کنندگان فعال</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(options.suppliers.length)}</div></article>
-        <article className="rounded-2xl border border-slate-200 bg-white p-5"><div className="text-xs font-bold text-slate-500">انبارهای فعال</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(options.warehouses.length)}</div></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-bold text-slate-500">تعداد اسناد</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(purchases.length)}</div></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-bold text-slate-500">خرید ثبت مالی‌شده</div><div className="mt-3 text-xl font-black">{money(postedTotal)}</div></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-bold text-slate-500">تأمین‌کنندگان فعال</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(options.suppliers.length)}</div></article>
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_25px_rgba(15,34,61,.04)]"><div className="text-xs font-bold text-slate-500">انبارهای فعال</div><div className="mt-3 text-xl font-black">{new Intl.NumberFormat("fa-IR").format(options.warehouses.length)}</div></article>
       </section>
 
       <section className="mt-5">
@@ -40,7 +40,7 @@ export default async function PurchasesPage() {
         <PurchaseForm suppliers={options.suppliers} warehouses={options.warehouses} items={options.items} />
       </section>
 
-      <section className="mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white">
+      <section className="mt-5 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_8px_25px_rgba(15,34,61,.04)]">
         <div className="border-b border-slate-100 p-5"><div className="text-xs font-black text-[#0b8d85]">اسناد خرید</div><h2 className="mt-1 text-xl font-black">چرخه پیش‌نویس تا ثبت مالی</h2></div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-right text-xs">
