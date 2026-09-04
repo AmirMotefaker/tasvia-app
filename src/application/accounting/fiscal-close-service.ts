@@ -112,10 +112,26 @@ export async function reopenFiscalPeriod(input: {
     if (!period) throw new Error("FISCAL_PERIOD_NOT_FOUND");
     if (period.status === "OPEN") return period;
 
-    return tx.fiscalPeriod.update({
+    const reopenedAt = new Date();
+
+    const updated = await tx.fiscalPeriod.update({
       where: { id: period.id },
       data: { status: "OPEN" },
     });
+
+    await tx.fiscalReopenAudit.create({
+      data: {
+        workspaceId: input.workspaceId,
+        fiscalPeriodId: period.id,
+        actorId: input.actorId,
+        reason,
+        beforeStatus: period.status,
+        afterStatus: updated.status,
+        occurredAt: reopenedAt,
+      },
+    });
+
+    return updated;
   });
 }
 
@@ -192,5 +208,15 @@ export async function reversePostedJournal(input: {
     });
 
     return reversal;
+  });
+}
+export async function listFiscalReopenAudits(
+  workspaceId: string,
+  fiscalPeriodId: string,
+) {
+  return prisma.fiscalReopenAudit.findMany({
+    where: { workspaceId, fiscalPeriodId },
+    orderBy: { occurredAt: "desc" },
+    take: 100,
   });
 }

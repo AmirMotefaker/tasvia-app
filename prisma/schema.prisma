@@ -232,6 +232,7 @@ model Workspace {
   memberships        Membership[]
   accountingAccounts AccountingAccount[]
   fiscalPeriods      FiscalPeriod[]
+  fiscalReopenAudits FiscalReopenAudit[]
   accountingJournals AccountingJournal[]
   counterparties     Counterparty[]
   openBalances       OpenBalance[]
@@ -369,6 +370,7 @@ model FiscalPeriod {
   endsAt      DateTime
   status      FiscalPeriodStatus @default(OPEN)
   journals    AccountingJournal[]
+  reopenAudits FiscalReopenAudit[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
@@ -377,6 +379,22 @@ model FiscalPeriod {
   @@index([workspaceId, status])
 }
 
+model FiscalReopenAudit {
+  id             String            @id @default(uuid())
+  workspaceId    String
+  workspace      Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  fiscalPeriodId String
+  fiscalPeriod   FiscalPeriod      @relation(fields: [fiscalPeriodId], references: [id], onDelete: Cascade)
+  actorId        String
+  reason         String
+  beforeStatus   FiscalPeriodStatus
+  afterStatus    FiscalPeriodStatus
+  occurredAt     DateTime
+  createdAt      DateTime          @default(now())
+
+  @@index([workspaceId, fiscalPeriodId, occurredAt])
+  @@index([workspaceId, actorId, occurredAt])
+}
 model AccountingJournal {
   id               String                  @id @default(uuid())
   workspaceId      String
