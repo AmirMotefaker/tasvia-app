@@ -247,6 +247,7 @@ model Workspace {
   fixedAssets        FixedAsset[]
   assetDepreciations AssetDepreciation[]
   subscription       WorkspaceSubscription?
+  apiKeys            ApiKey[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -801,4 +802,35 @@ model WorkspaceSubscription {
   canceledAt     DateTime?
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+}
+
+model ApiKey {
+  id          String   @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  name        String
+  prefix      String
+  secretHash  String   @unique
+  scopes      String[]
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([workspaceId, revokedAt])
+}
+
+model ApiAuditLog {
+  id          String   @id @default(uuid())
+  workspaceId String
+  apiKeyId    String?
+  method      String
+  path        String
+  statusCode  Int
+  requestId   String
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([requestId])
 }
