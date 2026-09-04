@@ -150,13 +150,23 @@ export async function executeSettlement(input: {
       }
     }
 
-    await tx.openBalance.update({
-      where: { id: balance.id },
+    const balanceMutation = await tx.openBalance.updateMany({
+      where: {
+        id: balance.id,
+        workspaceId: input.workspaceId,
+        type: expectedType,
+        status: balance.status,
+        outstandingAmount: balance.outstandingAmount,
+      },
       data: {
         outstandingAmount: next.outstandingAfter,
         status: next.status,
       },
     });
+
+    if (balanceMutation.count !== 1) {
+      throw new Error("OPEN_BALANCE_CONCURRENTLY_MODIFIED");
+    }
 
     const description =
       input.description?.trim() ||
