@@ -242,6 +242,10 @@ model Workspace {
   salesInvoices      SalesInvoice[]
   chequeRecords      ChequeRecord[]
   bankEvidence       BankEvidence[]
+  employees          Employee[]
+  payrollRuns        PayrollRun[]
+  fixedAssets        FixedAsset[]
+  assetDepreciations AssetDepreciation[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -669,4 +673,102 @@ model BankEvidence {
   @@unique([workspaceId, accountCode, externalRef])
   @@index([workspaceId, status, occurredAt])
   @@index([matchedJournalId])
+}
+
+enum PayrollRunStatus {
+  DRAFT
+  FINALIZED
+  PAID
+}
+
+enum FixedAssetStatus {
+  ACTIVE
+  DISPOSED
+}
+
+model Employee {
+  id           String        @id @default(uuid())
+  workspaceId  String
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  employeeCode String
+  name         String
+  nationalId   String?
+  mobile       String?
+  baseSalary   BigInt        @default(0)
+  active       Boolean       @default(true)
+  payrollLines PayrollLine[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([workspaceId, employeeCode])
+  @@index([workspaceId, active, name])
+}
+
+model PayrollRun {
+  id          String           @id @default(uuid())
+  workspaceId String
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  title       String
+  periodStart DateTime
+  periodEnd   DateTime
+  status      PayrollRunStatus @default(DRAFT)
+  lines       PayrollLine[]
+  finalizedAt DateTime?
+  paidAt      DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([workspaceId, periodStart, periodEnd])
+  @@index([workspaceId, status])
+}
+
+model PayrollLine {
+  id           String     @id @default(uuid())
+  payrollRunId String
+  payrollRun   PayrollRun @relation(fields: [payrollRunId], references: [id], onDelete: Cascade)
+  employeeId   String
+  employee     Employee   @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  grossPay     BigInt
+  deductions   BigInt     @default(0)
+  netPay       BigInt
+  note         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([payrollRunId, employeeId])
+  @@index([employeeId])
+}
+
+model FixedAsset {
+  id                  String              @id @default(uuid())
+  workspaceId         String
+  workspace           Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  code                String
+  name                String
+  acquisitionDate     DateTime
+  acquisitionCost     BigInt
+  residualValue       BigInt              @default(0)
+  usefulLifeMonths    Int
+  status              FixedAssetStatus    @default(ACTIVE)
+  depreciationEntries AssetDepreciation[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  @@unique([workspaceId, code])
+  @@index([workspaceId, status, acquisitionDate])
+}
+
+model AssetDepreciation {
+  id          String     @id @default(uuid())
+  workspaceId String
+  workspace   Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  assetId     String
+  asset       FixedAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  periodDate  DateTime
+  amount      BigInt
+  note        String?
+  createdAt   DateTime   @default(now())
+
+  @@unique([assetId, periodDate])
+  @@index([workspaceId, periodDate])
 }

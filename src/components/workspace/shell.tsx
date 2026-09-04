@@ -13,6 +13,8 @@ const items = [
   ["/app/cheques", "چک‌ها", "▤"],
   ["/app/customers", "مشتریان", "♙"],
   ["/app/suppliers", "تأمین‌کنندگان", "♙"],
+  ["/app/payroll", "حقوق و دستمزد", "₮"],
+  ["/app/fixed-assets", "دارایی ثابت", "◆"],
   ["/accounting/professional", "حسابداری", "≡"],
   ["/app/settlements", "تسویه‌ها", "⇄"],
   ["/app/reconciliation", "مغایرت‌گیری", "◎"],
