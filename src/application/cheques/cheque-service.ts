@@ -4,7 +4,10 @@ import {
   type ChequeStatus,
 } from "../../domain/accounting/cheque";
 import { assertFinancialWriteEnvironment } from "../accounting/simple-workflow-persistence";
-import { executeSettlement } from "../settlements/settlement-service";
+import {
+  executeSettlementInTransaction,
+  type TreasuryAccountCode,
+} from "../settlements/settlement-service";
 
 export async function listChequeOptions(workspaceId: string) {
   const [counterparties, balances] = await Promise.all([
@@ -105,6 +108,7 @@ export async function updateChequeStatus(input: {
   actorId: string;
   chequeId: string;
   nextStatus: ChequeStatus;
+  treasuryAccountCode?: TreasuryAccountCode;
 }) {
   assertFinancialWriteEnvironment();
 
@@ -137,12 +141,16 @@ export async function updateChequeStatus(input: {
         return current;
       }
 
-      const result = await executeSettlement({
+      if (!input.treasuryAccountCode) {
+        throw new Error("TREASURY_ACCOUNT_REQUIRED_FOR_CHEQUE_CLEARING");
+      }
+
+      const result = await executeSettlementInTransaction(tx, {
         workspaceId: input.workspaceId,
         actorId: input.actorId,
         direction: current.direction === "RECEIVED" ? "RECEIPT" : "PAYMENT",
         openBalanceId: current.openBalanceId,
-        treasuryAccountCode: "1102",
+        treasuryAccountCode: input.treasuryAccountCode,
         amountRials: current.amount,
         occurredAt: new Date(),
         idempotencyKey: `cheque-clear:${input.workspaceId}:${current.id}`,
@@ -156,7 +164,7 @@ export async function updateChequeStatus(input: {
         where: { id: current.id },
         data: {
           status: transitioned.status,
-          treasuryAccountCode: "1102",
+          treasuryAccountCode: input.treasuryAccountCode,
           clearedJournalId: result.journal.id,
           statusChangedBy: input.actorId,
           statusChangedAt: new Date(),

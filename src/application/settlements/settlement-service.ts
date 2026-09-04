@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { assertFinancialWriteEnvironment } from "../accounting/simple-workflow-persistence";
 import { nextSettlementStatus } from "../../domain/settlements/settlement";
@@ -59,7 +60,7 @@ export async function listSettlementOptions(workspaceId: string) {
   };
 }
 
-export async function executeSettlement(input: {
+export type SettlementInput = {
   workspaceId: string;
   actorId: string;
   direction: SettlementDirection;
@@ -69,14 +70,15 @@ export async function executeSettlement(input: {
   occurredAt: Date;
   idempotencyKey: string;
   description?: string;
-}) {
-  assertFinancialWriteEnvironment();
+};
 
+export async function executeSettlementInTransaction(
+  tx: Prisma.TransactionClient,
+  input: SettlementInput,
+) {
   if (!input.idempotencyKey.trim()) {
     throw new Error("IDEMPOTENCY_KEY_REQUIRED");
   }
-
-  return prisma.$transaction(async (tx) => {
     const existingJournal = await tx.accountingJournal.findFirst({
       where: {
         workspaceId: input.workspaceId,
@@ -258,5 +260,9 @@ export async function executeSettlement(input: {
       outstandingAfter: next.outstandingAfter,
       status: next.status,
     };
-  });
+}
+
+export async function executeSettlement(input: SettlementInput) {
+  assertFinancialWriteEnvironment();
+  return prisma.$transaction((tx) => executeSettlementInTransaction(tx, input));
 }
