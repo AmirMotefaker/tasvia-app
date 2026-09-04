@@ -6,6 +6,7 @@ const items = [
   ["/app/purchases", "خرید"],
   ["/app/treasury", "خزانه"],
   ["/app/inventory", "انبار"],
+  ["/app/dimensions", "شعب و ابعاد مالی"],
   ["/app/suppliers", "تأمین‌کنندگان"],
   ["/app/settlements", "تسویه‌ها"],
   ["/app/reconciliation", "مغایرت‌گیری"],

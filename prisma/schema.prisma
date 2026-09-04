@@ -58,6 +58,12 @@ enum AccountingJournalStatus {
   REVERSED
 }
 
+enum AccountingDimensionType {
+  BRANCH
+  COST_CENTER
+  PROJECT
+}
+
 enum CounterpartyType {
   CUSTOMER
   SUPPLIER
@@ -249,6 +255,7 @@ model Workspace {
   assetDepreciations AssetDepreciation[]
   subscription       WorkspaceSubscription?
   apiKeys            ApiKey[]
+  dimensionValues    AccountingDimensionValue[]
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -864,4 +871,19 @@ model ApiRateLimitBucket {
 
   @@index([workspaceId, apiKeyId, windowStartedAt])
   @@index([expiresAt])
+}
+model AccountingDimensionValue {
+  id          String                  @id @default(uuid())
+  workspaceId String
+  workspace   Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  type        AccountingDimensionType
+  code        String
+  name        String
+  active      Boolean                 @default(true)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  @@unique([workspaceId, type, code])
+  @@index([workspaceId, type, active])
+  @@index([workspaceId, name])
 }
