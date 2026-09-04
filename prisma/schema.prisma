@@ -246,6 +246,7 @@ model Workspace {
   payrollRuns        PayrollRun[]
   fixedAssets        FixedAsset[]
   assetDepreciations AssetDepreciation[]
+  subscription       WorkspaceSubscription?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -771,4 +772,33 @@ model AssetDepreciation {
 
   @@unique([assetId, periodDate])
   @@index([workspaceId, periodDate])
+}
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum BillingCycle {
+  MONTHLY
+  SEMIANNUAL
+  ANNUAL
+}
+
+model WorkspaceSubscription {
+  id             String             @id @default(uuid())
+  workspaceId    String             @unique
+  workspace      Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  planCode       String             @default("AGHAZ")
+  status         SubscriptionStatus @default(TRIALING)
+  billingCycle   BillingCycle?
+  trialStartedAt DateTime           @default(now())
+  trialEndsAt    DateTime
+  currentPeriodEndsAt DateTime?
+  activatedAt    DateTime?
+  canceledAt     DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
 }

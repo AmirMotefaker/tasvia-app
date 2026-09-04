@@ -22,6 +22,7 @@ const items = [
   ["/app/fiscal-close", "دوره مالی", "◷"],
   ["/app/commercial-controls", "کنترل‌های تجاری", "⌁"],
   ["/app/operations-controls", "عملیات", "⚙"],
+  ["/app/subscription", "اشتراک", "★"],
   ["/app/platform-controls", "تنظیمات", "⚑"],
 ] as const;
 
