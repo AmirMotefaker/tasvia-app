@@ -852,3 +852,16 @@ model ApiAuditLog {
   @@index([workspaceId, createdAt])
   @@index([requestId])
 }
+model ApiRateLimitBucket {
+  id              String   @id
+  workspaceId     String
+  apiKeyId        String
+  windowStartedAt DateTime
+  requestCount    Int      @default(0)
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([workspaceId, apiKeyId, windowStartedAt])
+  @@index([expiresAt])
+}

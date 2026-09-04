@@ -1,7 +1,14 @@
 import { prisma } from "../../../../src/lib/prisma";
-import { authorizeApi } from "../../../../src/application/api-platform/api-auth";
-export async function GET(request:Request){
- const auth=await authorizeApi(request,"inventory:read"); if("error" in auth)return auth.error;
- const data=await prisma.catalogItem.findMany({where:{workspaceId:auth.workspaceId},orderBy:{createdAt:"desc"},take:100});
- return Response.json({data,meta:{version:"v1",limit:100}});
+import { withAuthorizedApi } from "../../../../src/application/api-platform/api-request-guard";
+
+export async function GET(request: Request) {
+  return withAuthorizedApi(request, "inventory:read", async (auth) => {
+    const data = await prisma.catalogItem.findMany({
+      where: { workspaceId: auth.workspaceId },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+
+    return Response.json({ data, meta: { version: "v1", limit: 100 } });
+  });
 }
