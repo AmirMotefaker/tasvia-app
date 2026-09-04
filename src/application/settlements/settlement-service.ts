@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { assertFinancialWriteEnvironment } from "../accounting/simple-workflow-persistence";
 import { nextSettlementStatus } from "../../domain/settlements/settlement";
+import { assertWorkspaceWriteEntitlement } from "../subscription/workspace-entitlement";
 
 const ACCOUNT_CODES = {
   cash: "1101",
@@ -264,5 +265,6 @@ export async function executeSettlementInTransaction(
 
 export async function executeSettlement(input: SettlementInput) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
   return prisma.$transaction((tx) => executeSettlementInTransaction(tx, input));
 }

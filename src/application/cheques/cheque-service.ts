@@ -4,6 +4,7 @@ import {
   type ChequeStatus,
 } from "../../domain/accounting/cheque";
 import { assertFinancialWriteEnvironment } from "../accounting/simple-workflow-persistence";
+import { assertWorkspaceWriteEntitlement } from "../subscription/workspace-entitlement";
 import {
   executeSettlementInTransaction,
   type TreasuryAccountCode,
@@ -52,6 +53,7 @@ export async function createCheque(input: {
   openBalanceId?: string;
 }) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
 
   if (!input.chequeNumber.trim()) throw new Error("CHEQUE_NUMBER_REQUIRED");
   if (input.amount <= 0n) throw new Error("CHEQUE_AMOUNT_INVALID");
@@ -111,6 +113,7 @@ export async function updateChequeStatus(input: {
   treasuryAccountCode?: TreasuryAccountCode;
 }) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
 
   return prisma.$transaction(async (tx) => {
     const current = await tx.chequeRecord.findFirst({

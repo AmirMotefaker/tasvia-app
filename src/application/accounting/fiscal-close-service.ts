@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma";
 import { assertFinancialWriteEnvironment } from "./simple-workflow-persistence";
+import { assertWorkspaceWriteEntitlement } from "../subscription/workspace-entitlement";
 
 export async function listFiscalPeriods(workspaceId: string) {
   return prisma.fiscalPeriod.findMany({
@@ -62,6 +63,7 @@ export async function closeFiscalPeriod(input: {
   fiscalPeriodId: string;
 }) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
 
   return prisma.$transaction(async (tx) => {
     const period = await tx.fiscalPeriod.findFirst({
@@ -97,6 +99,7 @@ export async function reopenFiscalPeriod(input: {
   reason: string;
 }) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
 
   const reason = input.reason.trim();
   if (reason.length < 10) throw new Error("FISCAL_REOPEN_REASON_REQUIRED");
@@ -143,6 +146,7 @@ export async function reversePostedJournal(input: {
   occurredAt: Date;
 }) {
   assertFinancialWriteEnvironment();
+  await assertWorkspaceWriteEntitlement(input.workspaceId);
 
   const reason = input.reason.trim();
   if (reason.length < 10) throw new Error("REVERSAL_REASON_REQUIRED");
