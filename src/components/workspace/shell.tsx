@@ -11,6 +11,7 @@ const items = [
   ["/app/treasury", "خزانه", "◉"],
   ["/app/inventory", "انبار", "◇"],
   ["/app/cheques", "چک‌ها", "▤"],
+  ["/app/customers", "مشتریان", "♙"],
   ["/app/suppliers", "تأمین‌کنندگان", "♙"],
   ["/accounting/professional", "حسابداری", "≡"],
   ["/app/settlements", "تسویه‌ها", "⇄"],
