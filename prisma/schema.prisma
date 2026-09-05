@@ -258,6 +258,7 @@ model Workspace {
   dimensionValues      AccountingDimensionValue[]
   dimensionAssignments AccountingDimensionAssignment[]
   auditEvents          AuditEvent[]
+  financialEvidence    FinancialEvidence[]
   createdAt            DateTime                        @default(now())
   updatedAt            DateTime                        @updatedAt
 }
@@ -950,4 +951,31 @@ model AuditEvent {
   @@index([workspaceId, category, createdAt])
   @@index([workspaceId, entityType, entityId, createdAt])
   @@index([requestId])
+}
+
+model FinancialEvidence {
+  id               String    @id @default(uuid())
+  workspaceId      String
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Restrict)
+  category         String
+  sourceEntityType String
+  sourceEntityId   String
+  journalId        String?
+  safeFileName     String
+  mimeType         String
+  byteSize         Int
+  sha256           String
+  storageKey       String
+  description      String?
+  uploadedBy       String
+  archivedAt       DateTime?
+  archivedBy       String?
+  archiveReason    String?
+  createdAt        DateTime  @default(now())
+
+  @@unique([workspaceId, sha256, storageKey])
+  @@index([workspaceId, sourceEntityType, sourceEntityId, createdAt])
+  @@index([workspaceId, category, createdAt])
+  @@index([workspaceId, journalId])
+  @@index([workspaceId, archivedAt])
 }
