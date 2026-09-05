@@ -257,6 +257,7 @@ model Workspace {
   apiKeys              ApiKey[]
   dimensionValues      AccountingDimensionValue[]
   dimensionAssignments AccountingDimensionAssignment[]
+  auditEvents          AuditEvent[]
   createdAt            DateTime                        @default(now())
   updatedAt            DateTime                        @updatedAt
 }
@@ -922,4 +923,31 @@ model AccountingDimensionAllocation {
 
   @@unique([assignmentId, dimensionValueId])
   @@index([dimensionValueId])
+}
+
+model AuditEvent {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Restrict)
+  actorId     String
+  actorRole   String?
+  actorType   String    @default("USER")
+  action      String
+  category    String
+  severity    String    @default("INFO")
+  entityType  String
+  entityId    String
+  requestId   String?
+  reason      String?
+  beforeState Json?
+  afterState  Json?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@index([workspaceId, actorId, createdAt])
+  @@index([workspaceId, action, createdAt])
+  @@index([workspaceId, category, createdAt])
+  @@index([workspaceId, entityType, entityId, createdAt])
+  @@index([requestId])
 }

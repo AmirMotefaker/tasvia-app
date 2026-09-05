@@ -15,6 +15,7 @@ const items = [
   ["/app/platform-controls", "انطباق و اتصال"],
   ["/app/alerts", "هشدارها"],
   ["/app/reports/financial", "گزارش‌های مالی"],
+  ["/app/audit", "ردپای حسابرسی"],
   ["/accounting/simple", "ثبت ساده"],
   ["/accounting/professional", "حسابداری حرفه‌ای"],
 ] as const;
