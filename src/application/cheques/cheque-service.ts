@@ -9,6 +9,7 @@ import {
   executeSettlementInTransaction,
   type TreasuryAccountCode,
 } from "../settlements/settlement-service";
+import { recordAuditEventInTransaction } from "../audit/audit-service";
 
 export async function listChequeOptions(workspaceId: string) {
   const [counterparties, balances] = await Promise.all([
@@ -87,7 +88,7 @@ export async function createCheque(input: {
       }
     }
 
-    return tx.chequeRecord.create({
+    const created = await tx.chequeRecord.create({
       data: {
         workspaceId: input.workspaceId,
         counterpartyId: input.counterpartyId,
@@ -102,6 +103,24 @@ export async function createCheque(input: {
         createdBy: input.actorId,
       },
     });
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: "CHEQUE_CREATED",
+      category: "CHEQUE",
+      entityType: "ChequeRecord",
+      entityId: created.id,
+      after: {
+        direction: created.direction,
+        chequeNumber: created.chequeNumber,
+        amount: created.amount,
+        status: created.status,
+        dueAt: created.dueAt,
+      },
+    });
+
+    return created;
   });
 }
 
@@ -163,7 +182,7 @@ export async function updateChequeStatus(input: {
             : `پاس شدن چک ${current.chequeNumber}`,
       });
 
-      return tx.chequeRecord.update({
+      const updated = await tx.chequeRecord.update({
         where: { id: current.id },
         data: {
           status: transitioned.status,
@@ -173,9 +192,26 @@ export async function updateChequeStatus(input: {
           statusChangedAt: new Date(),
         },
       });
+
+      await recordAuditEventInTransaction(tx, {
+        workspaceId: input.workspaceId,
+        actorId: input.actorId,
+        action: "CHEQUE_STATUS_CHANGED",
+        category: "CHEQUE",
+        entityType: "ChequeRecord",
+        entityId: current.id,
+        before: { status: current.status },
+        after: { status: updated.status },
+        metadata: {
+          clearedJournalId: result.journal.id,
+          treasuryAccountCode: input.treasuryAccountCode,
+        },
+      });
+
+      return updated;
     }
 
-    return tx.chequeRecord.update({
+    const updated = await tx.chequeRecord.update({
       where: { id: current.id },
       data: {
         status: transitioned.status,
@@ -183,5 +219,19 @@ export async function updateChequeStatus(input: {
         statusChangedAt: new Date(),
       },
     });
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: "CHEQUE_STATUS_CHANGED",
+      category: "CHEQUE",
+      severity: updated.status === "BOUNCED" ? "WARNING" : "INFO",
+      entityType: "ChequeRecord",
+      entityId: current.id,
+      before: { status: current.status },
+      after: { status: updated.status },
+    });
+
+    return updated;
   });
 }

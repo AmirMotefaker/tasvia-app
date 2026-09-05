@@ -1,6 +1,7 @@
 import { prisma } from "../../lib/prisma";
 import { assertFinancialWriteEnvironment } from "./simple-workflow-persistence";
 import { assertWorkspaceWriteEntitlement } from "../subscription/workspace-entitlement";
+import { recordAuditEventInTransaction } from "../audit/audit-service";
 
 export async function listFiscalPeriods(workspaceId: string) {
   return prisma.fiscalPeriod.findMany({
@@ -85,10 +86,24 @@ export async function closeFiscalPeriod(input: {
 
     if (drafts > 0) throw new Error("FISCAL_CLOSE_DRAFT_JOURNALS");
 
-    return tx.fiscalPeriod.update({
+    const updated = await tx.fiscalPeriod.update({
       where: { id: period.id },
       data: { status: "CLOSED" },
     });
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: "FISCAL_PERIOD_CLOSED",
+      category: "FISCAL_CONTROL",
+      severity: "WARNING",
+      entityType: "FiscalPeriod",
+      entityId: period.id,
+      before: { status: period.status },
+      after: { status: updated.status },
+    });
+
+    return updated;
   });
 }
 
@@ -132,6 +147,19 @@ export async function reopenFiscalPeriod(input: {
         afterStatus: updated.status,
         occurredAt: reopenedAt,
       },
+    });
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: "FISCAL_PERIOD_REOPENED",
+      category: "FISCAL_CONTROL",
+      severity: "CRITICAL",
+      entityType: "FiscalPeriod",
+      entityId: period.id,
+      reason,
+      before: { status: period.status },
+      after: { status: updated.status },
     });
 
     return updated;
@@ -209,6 +237,20 @@ export async function reversePostedJournal(input: {
         status: "REVERSED",
         reversedAt: new Date(),
       },
+    });
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: "ACCOUNTING_JOURNAL_REVERSED",
+      category: "ACCOUNTING",
+      severity: "CRITICAL",
+      entityType: "AccountingJournal",
+      entityId: original.id,
+      reason,
+      before: { status: original.status },
+      after: { status: "REVERSED" },
+      metadata: { reversalJournalId: reversal.id },
     });
 
     return reversal;

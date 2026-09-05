@@ -70,25 +70,34 @@ function normalizedRequired(value: string, code: string): string {
   return normalized;
 }
 
+function auditCreateData(input: RecordAuditEventInput) {
+  return {
+    workspaceId: normalizedRequired(input.workspaceId, "AUDIT_WORKSPACE_REQUIRED"),
+    actorId: normalizedRequired(input.actorId, "AUDIT_ACTOR_REQUIRED"),
+    actorRole: input.actorRole?.trim() || null,
+    actorType: input.actorType ?? "USER",
+    action: normalizedRequired(input.action, "AUDIT_ACTION_REQUIRED"),
+    category: normalizedRequired(input.category, "AUDIT_CATEGORY_REQUIRED"),
+    severity: input.severity ?? "INFO",
+    entityType: normalizedRequired(input.entityType, "AUDIT_ENTITY_TYPE_REQUIRED"),
+    entityId: normalizedRequired(input.entityId, "AUDIT_ENTITY_ID_REQUIRED"),
+    requestId: input.requestId?.trim() || null,
+    reason: input.reason?.trim() || null,
+    beforeState: redactAuditPayload(input.before) as Prisma.InputJsonObject | undefined,
+    afterState: redactAuditPayload(input.after) as Prisma.InputJsonObject | undefined,
+    metadata: redactAuditPayload(input.metadata) as Prisma.InputJsonObject | undefined,
+  };
+}
+
 export async function recordAuditEvent(input: RecordAuditEventInput) {
-  return prisma.auditEvent.create({
-    data: {
-      workspaceId: normalizedRequired(input.workspaceId, "AUDIT_WORKSPACE_REQUIRED"),
-      actorId: normalizedRequired(input.actorId, "AUDIT_ACTOR_REQUIRED"),
-      actorRole: input.actorRole?.trim() || null,
-      actorType: input.actorType ?? "USER",
-      action: normalizedRequired(input.action, "AUDIT_ACTION_REQUIRED"),
-      category: normalizedRequired(input.category, "AUDIT_CATEGORY_REQUIRED"),
-      severity: input.severity ?? "INFO",
-      entityType: normalizedRequired(input.entityType, "AUDIT_ENTITY_TYPE_REQUIRED"),
-      entityId: normalizedRequired(input.entityId, "AUDIT_ENTITY_ID_REQUIRED"),
-      requestId: input.requestId?.trim() || null,
-      reason: input.reason?.trim() || null,
-      beforeState: redactAuditPayload(input.before) as Prisma.InputJsonObject | undefined,
-      afterState: redactAuditPayload(input.after) as Prisma.InputJsonObject | undefined,
-      metadata: redactAuditPayload(input.metadata) as Prisma.InputJsonObject | undefined,
-    },
-  });
+  return prisma.auditEvent.create({ data: auditCreateData(input) });
+}
+
+export async function recordAuditEventInTransaction(
+  tx: Prisma.TransactionClient,
+  input: RecordAuditEventInput,
+) {
+  return tx.auditEvent.create({ data: auditCreateData(input) });
 }
 
 export type AuditEventFilters = {

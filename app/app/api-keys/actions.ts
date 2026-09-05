@@ -7,6 +7,7 @@ import {
   issueApiSecret,
   validateApiScopes,
 } from "../../../src/application/api-platform/api-contract";
+import { recordAuditEvent } from "../../../src/application/audit/audit-service";
 
 export type ApiKeyActionState = {
   secret: string | null;
@@ -47,7 +48,7 @@ export async function createApiKey(
     );
     const issued = issueApiSecret();
 
-    await prisma.apiKey.create({
+    const created = await prisma.apiKey.create({
       data: {
         workspaceId: current.workspace.id,
         name,
@@ -55,6 +56,18 @@ export async function createApiKey(
         secretHash: issued.hash,
         scopes,
       },
+    });
+
+    await recordAuditEvent({
+      workspaceId: current.workspace.id,
+      actorId: current.userId,
+      actorRole: current.role,
+      action: "API_KEY_CREATED",
+      category: "SECURITY",
+      severity: "WARNING",
+      entityType: "ApiKey",
+      entityId: created.id,
+      metadata: { name: created.name, prefix: created.prefix, scopes: created.scopes },
     });
 
     revalidatePath("/app/api-keys");
@@ -91,6 +104,17 @@ export async function rotateApiKey(
 
     if (result.count !== 1) throw new Error("API_KEY_NOT_FOUND");
 
+    await recordAuditEvent({
+      workspaceId: current.workspace.id,
+      actorId: current.userId,
+      actorRole: current.role,
+      action: "API_KEY_ROTATED",
+      category: "SECURITY",
+      severity: "CRITICAL",
+      entityType: "ApiKey",
+      entityId: id,
+    });
+
     revalidatePath("/app/api-keys");
     return { secret: issued.token, error: null };
   } catch (error) {
@@ -105,13 +129,26 @@ export async function revokeApiKey(formData: FormData): Promise<void> {
   const id = String(formData.get("id") ?? "").trim();
   if (!id) throw new Error("API_KEY_NOT_FOUND");
 
-  await prisma.apiKey.updateMany({
+  const result = await prisma.apiKey.updateMany({
     where: {
       id,
       workspaceId: current.workspace.id,
       revokedAt: null,
     },
     data: { revokedAt: new Date() },
+  });
+
+  if (result.count !== 1) throw new Error("API_KEY_NOT_FOUND");
+
+  await recordAuditEvent({
+    workspaceId: current.workspace.id,
+    actorId: current.userId,
+    actorRole: current.role,
+    action: "API_KEY_REVOKED",
+    category: "SECURITY",
+    severity: "CRITICAL",
+    entityType: "ApiKey",
+    entityId: id,
   });
 
   revalidatePath("/app/api-keys");

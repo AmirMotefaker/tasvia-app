@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma";
 import { assertFinancialWriteEnvironment } from "../accounting/simple-workflow-persistence";
 import { nextSettlementStatus } from "../../domain/settlements/settlement";
 import { assertWorkspaceWriteEntitlement } from "../subscription/workspace-entitlement";
+import { recordAuditEventInTransaction } from "../audit/audit-service";
 
 const ACCOUNT_CODES = {
   cash: "1101",
@@ -254,6 +255,31 @@ export async function executeSettlementInTransaction(
         });
       }
     }
+
+    await recordAuditEventInTransaction(tx, {
+      workspaceId: input.workspaceId,
+      actorId: input.actorId,
+      action: input.direction === "RECEIPT" ? "SETTLEMENT_RECEIPT_POSTED" : "SETTLEMENT_PAYMENT_POSTED",
+      category: "SETTLEMENT",
+      severity: "INFO",
+      entityType: "OpenBalance",
+      entityId: balance.id,
+      requestId: input.idempotencyKey,
+      before: {
+        status: balance.status,
+        outstandingAmount: balance.outstandingAmount,
+      },
+      after: {
+        status: next.status,
+        outstandingAmount: next.outstandingAfter,
+      },
+      metadata: {
+        journalId: journal.id,
+        amountRials: input.amountRials,
+        treasuryAccountCode: input.treasuryAccountCode,
+        sourceDocumentId: balance.sourceDocumentId,
+      },
+    });
 
     return {
       journal,

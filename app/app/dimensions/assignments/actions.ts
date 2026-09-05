@@ -4,6 +4,7 @@ import type { AccountingDimensionType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { requireCurrentWorkspace } from "../../../../src/auth/current-workspace";
 import { setJournalLineDimensionAssignment } from "../../../../src/application/accounting/dimension-assignment-service";
+import { recordAuditEvent } from "../../../../src/application/audit/audit-service";
 
 function assertCanManage(role: string) {
   if (role === "VIEWER") {
@@ -67,6 +68,17 @@ export async function setDimensionAssignmentAction(formData: FormData): Promise<
     journalLineId,
     type,
     allocations,
+  });
+
+  await recordAuditEvent({
+    workspaceId: current.workspace.id,
+    actorId: current.userId,
+    actorRole: current.role,
+    action: "DIMENSION_ASSIGNMENT_SET",
+    category: "DIMENSION",
+    entityType: "AccountingJournalLine",
+    entityId: journalLineId,
+    metadata: { type, allocations },
   });
 
   revalidatePath("/app/dimensions/assignments");
