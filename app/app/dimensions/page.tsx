@@ -1,4 +1,5 @@
 import type { AccountingDimensionType } from "@prisma/client";
+import Link from "next/link";
 import { WorkspaceShell } from "../../../src/components/workspace/shell";
 import { requireCurrentWorkspace } from "../../../src/auth/current-workspace";
 import { listDimensionValues } from "../../../src/application/accounting/dimension-service";
@@ -39,6 +40,15 @@ export default async function DimensionsPage() {
       title="شعب و ابعاد مالی"
       eyebrow="ساختار مدیریتی برای گزارش‌گیری شعب، مراکز هزینه و پروژه‌ها"
     >
+      <div className="mb-5">
+        <Link
+          href="/app/dimensions/assignments"
+          className="inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-[#008f87]"
+        >
+          تخصیص ابعاد به اسناد حسابداری
+        </Link>
+      </div>
+
       <div className="grid gap-5 xl:grid-cols-3">
         {sections.map((section) => {
           const rows = values.filter((item) => item.type === section.type);
